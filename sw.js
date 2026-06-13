@@ -3,8 +3,8 @@
    Color Tube Master 3D
 ═══════════════════════════════════════════════════════════ */
 
-const CACHE_NAME   = 'ctm3d-v5';
-const STATIC_CACHE = 'ctm3d-static-v5';
+const CACHE_NAME   = 'ctm3d-v6';
+const STATIC_CACHE = 'ctm3d-static-v6';
 
 // Files to cache for full offline play
 const PRECACHE_URLS = [
@@ -58,6 +58,13 @@ self.addEventListener('activate', event => {
       )
     ).then(() => self.clients.claim())
   );
+});
+
+// ── Message: allow page to trigger skipWaiting ────────────
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 // ── Fetch: serve from cache, fall back to network ─────────

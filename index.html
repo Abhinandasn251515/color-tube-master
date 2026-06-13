@@ -724,21 +724,28 @@
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then(reg => {
-          console.log('[SW] Registered:', reg.scope);
-          // Detect service worker updates and auto-reload the page
-          reg.addEventListener('updatefound', () => {
-            const newWorker = reg.installing;
-            newWorker.addEventListener('statechange', () => {
-              if (newWorker.state === 'activated') {
-                console.log('[SW] New version activated, reloading...');
-                window.location.reload();
+      navigator.serviceWorker.register('/sw.js').then(reg => {
+        console.log('[SW] Registered:', reg.scope);
+
+        // When a new SW is found, tell it to skip waiting immediately
+        reg.addEventListener('updatefound', () => {
+          const newSW = reg.installing;
+          newSW.addEventListener('statechange', () => {
+            if (newSW.state === 'installed') {
+              // New SW installed — force it to activate now
+              if (navigator.serviceWorker.controller) {
+                newSW.postMessage({ type: 'SKIP_WAITING' });
               }
-            });
+            }
           });
-        })
-        .catch(err => console.warn('[SW] Registration failed:', err));
+        });
+      }).catch(err => console.warn('[SW] Failed:', err));
+
+      // When a new SW takes control, reload to get fresh files
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!refreshing) { refreshing = true; window.location.reload(); }
+      });
     });
   }
 </script>

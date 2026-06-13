@@ -183,8 +183,14 @@
     if (bg) { bg.width = window.innerWidth; bg.height = window.innerHeight; }
   });
 
-  // ── Prevent default touch gestures ───────────────────
-  document.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+  // ── Prevent default touch gestures (game screen only) ───
+  document.addEventListener('touchmove', e => {
+    // Only block touchmove during the tube-sorting game to prevent scroll
+    const activeScreen = document.querySelector('.screen.active');
+    if (activeScreen && activeScreen.id === 'screen-game') {
+      e.preventDefault();
+    }
+  }, { passive: false });
 
   // ── Resume audio on first interaction ────────────────
   document.addEventListener('click', () => Audio.resume(), { once: true });

@@ -49,9 +49,9 @@
 </head>
 <body class="theme-lab">
 
-<!-- Programmatic Cache Wipeout (Force upgrade to v15) -->
+<!-- Programmatic Cache Wipeout (Force upgrade to v16) -->
 <script>
-  if (!localStorage.getItem('ctm3d_wipeout_v15')) {
+  if (!localStorage.getItem('ctm3d_wipeout_v16')) {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations().then(registrations => {
         for (const registration of registrations) {
@@ -60,22 +60,22 @@
         if (window.caches) {
           caches.keys().then(keys => {
             Promise.all(keys.map(key => caches.delete(key))).then(() => {
-              localStorage.setItem('ctm3d_wipeout_v15', 'true');
+              localStorage.setItem('ctm3d_wipeout_v16', 'true');
               window.location.reload();
             });
           }).catch(() => {
-            localStorage.setItem('ctm3d_wipeout_v15', 'true');
+            localStorage.setItem('ctm3d_wipeout_v16', 'true');
             window.location.reload();
           });
         } else {
-          localStorage.setItem('ctm3d_wipeout_v15', 'true');
+          localStorage.setItem('ctm3d_wipeout_v16', 'true');
           window.location.reload();
         }
       }).catch(() => {
-        localStorage.setItem('ctm3d_wipeout_v15', 'true');
+        localStorage.setItem('ctm3d_wipeout_v16', 'true');
       });
     } else {
-      localStorage.setItem('ctm3d_wipeout_v15', 'true');
+      localStorage.setItem('ctm3d_wipeout_v16', 'true');
     }
   }
 </script>
@@ -619,6 +619,18 @@
       <div class="settings-item">Progress<span class="settings-val" id="settings-progress">0/100</span></div>
       <div class="settings-item">Version<span class="settings-val">v1.0.0</span></div>
     </div>
+    <div class="settings-section" id="settings-install-section" style="display:none;">
+      <div class="settings-section-title">App Installation</div>
+      <button class="btn-primary" id="btn-install-app" style="width: 100%; border-radius: var(--r-md); justify-content: center; font-weight: 800; padding: 10px; margin-top: 5px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+        📲 Install App
+      </button>
+    </div>
+    <div class="settings-section" id="settings-ios-install-section" style="display:none;">
+      <div class="settings-section-title">App Installation</div>
+      <div class="settings-item" style="font-size:0.75rem; color:rgba(255,255,255,0.75); line-height: 1.5; padding: 10px; display: block; text-align: center; border: 1px dashed rgba(255,255,255,0.15); border-radius: var(--r-md); background: rgba(255,255,255,0.02);">
+        To install on iOS: Tap Share (📤) in Safari and select **"Add to Home Screen"** (➕).
+      </div>
+    </div>
     <button class="btn-danger" id="btn-reset">⚠️ Reset All Progress</button>
   </div>
 </div>
@@ -883,6 +895,43 @@
       });
     });
   }
+</script>
+
+<!-- PWA Install Prompt Handler -->
+<script>
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const installSection = document.getElementById('settings-install-section');
+    if (installSection) {
+      installSection.style.display = 'block';
+    }
+  });
+
+  document.getElementById('btn-install-app')?.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log('[PWA] User choice outcome:', outcome);
+    deferredPrompt = null;
+    const installSection = document.getElementById('settings-install-section');
+    if (installSection) {
+      installSection.style.display = 'none';
+    }
+  });
+
+  // Detect iOS and show tooltip if not already in standalone PWA mode
+  window.addEventListener('DOMContentLoaded', () => {
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    if (isIOS && !isStandalone) {
+      const iosInstallSection = document.getElementById('settings-ios-install-section');
+      if (iosInstallSection) {
+        iosInstallSection.style.display = 'block';
+      }
+    }
+  });
 </script>
 
 <!-- ════════ BUY ME A COFFEE WIDGET ════════ -->

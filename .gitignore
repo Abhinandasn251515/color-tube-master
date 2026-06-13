@@ -20,3 +20,8 @@ desktop.ini
 # Temp
 *.tmp
 *.temp
+
+# Local Build Artifacts / JDK
+jdk17/
+*.apk
+

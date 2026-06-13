@@ -1,0 +1,382 @@
+/* ═══════════════════════════════════════════════════════════
+   ads.css — Ad Banner & Modal Styles
+   Color Tube Master 3D
+═══════════════════════════════════════════════════════════ */
+
+/* ── Banner Wrapper ──────────────────────────────────── */
+.ad-banner-wrap {
+  width: 100%;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.25);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* Menu bottom banner */
+#ad-menu-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  min-height: 60px;
+  background: rgba(10,8,30,0.92);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(124,58,237,0.3);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+}
+
+/* Win screen banner */
+.ad-banner-win {
+  margin-top: 12px;
+  border-radius: 12px;
+  min-height: 60px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
+}
+
+/* ── Demo Banner (shown before AdSense approval) ────── */
+.ad-demo-banner {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  gap: 12px;
+}
+
+.ad-demo-text {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.55);
+  font-style: italic;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ad-demo-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.08);
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+/* ── Rewarded Ad Modal ───────────────────────────────── */
+.ad-modal-card {
+  width: min(360px, 92vw) !important;
+  padding: 24px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.ad-modal-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.ad-modal-header .ad-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.ad-modal-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.ad-modal-header p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.6);
+  text-align: center;
+}
+
+/* ── Ad Content Box (where the real ad renders) ────── */
+.ad-content-box {
+  width: 300px;
+  min-height: 120px;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* ── Placeholder box (demo mode) ─────────────────────── */
+.ad-placeholder-box {
+  width: 100%;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.ad-placeholder-icon {
+  font-size: 2.5rem;
+  animation: adPulse 1.5s ease-in-out infinite;
+}
+
+.ad-placeholder-text {
+  font-size: 1rem;
+  font-weight: 800;
+  color: rgba(255,255,255,0.7);
+}
+
+.ad-placeholder-sub {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.4);
+}
+
+@keyframes adPulse {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50%       { transform: scale(1.12); opacity: 1; }
+}
+
+/* ── Countdown bar ───────────────────────────────────── */
+.ad-countdown {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ad-bar {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.ad-bar #ad-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #7c3aed, #06b6d4);
+  border-radius: 99px;
+  transition: width 0.9s linear;
+}
+
+#ad-timer {
+  font-size: 1rem;
+  font-weight: 900;
+  color: rgba(255,255,255,0.6);
+  min-width: 20px;
+  text-align: center;
+}
+
+/* ── Space at bottom of menu for banner ─────────────── */
+#screen-menu {
+  padding-bottom: 130px;
+}
+
+/* ── Support / Share Bar ─────────────────────────────── */
+.support-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 16px 16px;
+  flex-wrap: wrap;
+}
+
+.btn-share {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: 99px;
+  border: 1.5px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.07);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Outfit', sans-serif;
+}
+
+.btn-share:hover, .btn-share:active {
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.4);
+  transform: translateY(-2px);
+}
+
+.btn-coffee {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: 99px;
+  background: linear-gradient(135deg, #FFDD00, #FF9500);
+  color: #1a1a1a;
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(255,200,0,0.3);
+  font-family: 'Outfit', sans-serif;
+}
+
+.btn-coffee:hover, .btn-coffee:active {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255,200,0,0.5);
+}
+
+/* ── Razorpay India Button ───────────────────────────── */
+.btn-razorpay {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: 99px;
+  background: linear-gradient(135deg, #2D9CDB, #1565C0);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(45,156,219,0.35);
+  font-family: 'Outfit', sans-serif;
+}
+
+.btn-razorpay:hover, .btn-razorpay:active {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(45,156,219,0.55);
+}
+
+/* ── Support menu tile special glow ─────────────────── */
+.menu-tile-support {
+  background: linear-gradient(135deg, rgba(245,158,11,0.25), rgba(239,68,68,0.2)) !important;
+  border-color: rgba(245,158,11,0.4) !important;
+  animation: supportGlow 2s ease-in-out infinite;
+}
+@keyframes supportGlow {
+  0%,100% { box-shadow: 0 4px 20px rgba(245,158,11,0.2); }
+  50%     { box-shadow: 0 4px 32px rgba(245,158,11,0.5); }
+}
+
+/* ── Floating Donate FAB ─────────────────────────────── */
+.donate-fab {
+  position: fixed;
+  left: 16px;
+  bottom: 80px;
+  z-index: 200;
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(245,158,11,0.5);
+  animation: donatePulse 2s ease-in-out infinite;
+  user-select: none;
+}
+@keyframes donatePulse {
+  0%,100% { transform: scale(1); box-shadow: 0 6px 24px rgba(245,158,11,0.5); }
+  50%     { transform: scale(1.1); box-shadow: 0 8px 32px rgba(245,158,11,0.75); }
+}
+
+/* ── Donate Panel ────────────────────────────────────── */
+.donate-panel {
+  position: fixed;
+  left: 14px;
+  bottom: 145px;
+  z-index: 201;
+  width: min(300px, calc(100vw - 28px));
+  background: rgba(10,8,30,0.97);
+  border: 1px solid rgba(124,58,237,0.4);
+  border-radius: 20px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  animation: panelSlideUp 0.25s ease;
+}
+@keyframes panelSlideUp {
+  from { opacity:0; transform: translateY(20px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+.donate-panel-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #fff;
+  text-align: center;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.donate-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.donate-india  { background: rgba(19,78,74,0.35); }
+.donate-global { background: rgba(120,80,20,0.35); }
+.donate-option:hover, .donate-option:active {
+  transform: translateX(4px);
+  border-color: rgba(255,255,255,0.2);
+}
+
+
+.donate-icon { font-size: 1.8rem; }
+
+.donate-label {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #fff;
+}
+.donate-sub {
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.45);
+  margin-top: 2px;
+}
+.donate-arrow {
+  margin-left: auto;
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.4);
+}
+
+.donate-close {
+  width: 100%;
+  padding: 8px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.5);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+}

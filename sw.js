@@ -3,8 +3,8 @@
    Color Tube Master 3D
 ═══════════════════════════════════════════════════════════ */
 
-const CACHE_NAME   = 'ctm3d-v12';
-const STATIC_CACHE = 'ctm3d-static-v12';
+const CACHE_NAME   = 'ctm3d-v13';
+const STATIC_CACHE = 'ctm3d-static-v13';
 
 // Files to cache for full offline play
 const PRECACHE_URLS = [

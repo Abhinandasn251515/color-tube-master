@@ -74,7 +74,6 @@ const TicTacToe3D = (() => {
     board.fill(null);
     currentPlayer = 'X';
     gameActive = true;
-    lastActivated = -1;
 
     // Clear cells
     document.querySelectorAll('.ttt-cell').forEach(cell => {

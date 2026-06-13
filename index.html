@@ -49,9 +49,9 @@
 </head>
 <body class="theme-lab">
 
-<!-- Programmatic Cache Wipeout (Force upgrade to v11) -->
+<!-- Programmatic Cache Wipeout (Force upgrade to v13) -->
 <script>
-  if (!localStorage.getItem('ctm3d_wipeout_v11')) {
+  if (!localStorage.getItem('ctm3d_wipeout_v13')) {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations().then(registrations => {
         for (const registration of registrations) {
@@ -60,22 +60,22 @@
         if (window.caches) {
           caches.keys().then(keys => {
             Promise.all(keys.map(key => caches.delete(key))).then(() => {
-              localStorage.setItem('ctm3d_wipeout_v11', 'true');
+              localStorage.setItem('ctm3d_wipeout_v13', 'true');
               window.location.reload();
             });
           }).catch(() => {
-            localStorage.setItem('ctm3d_wipeout_v11', 'true');
+            localStorage.setItem('ctm3d_wipeout_v13', 'true');
             window.location.reload();
           });
         } else {
-          localStorage.setItem('ctm3d_wipeout_v11', 'true');
+          localStorage.setItem('ctm3d_wipeout_v13', 'true');
           window.location.reload();
         }
       }).catch(() => {
-        localStorage.setItem('ctm3d_wipeout_v11', 'true');
+        localStorage.setItem('ctm3d_wipeout_v13', 'true');
       });
     } else {
-      localStorage.setItem('ctm3d_wipeout_v11', 'true');
+      localStorage.setItem('ctm3d_wipeout_v13', 'true');
     }
   }
 </script>

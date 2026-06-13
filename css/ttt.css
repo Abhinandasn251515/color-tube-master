@@ -197,9 +197,10 @@
 
 /* ── THE BOARD (FLAT, NO 3D TRANSFORM = clickable!) ─── */
 .ttt-board-wrapper {
-  width: 100%;
+  width: 90vw;
+  height: 90vw;
   max-width: 320px;
-  aspect-ratio: 1;
+  max-height: 320px;
   position: relative;
 }
 

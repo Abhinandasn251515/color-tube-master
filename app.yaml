@@ -1,0 +1,57 @@
+# ═══════════════════════════════════════════════════════════
+# app.yaml — Google App Engine Configuration
+# Color Tube Master 3D
+# ═══════════════════════════════════════════════════════════
+
+runtime: python39
+
+handlers:
+  # 1. PWA Manifest
+  - url: /manifest.json
+    static_files: manifest.json
+    upload: manifest.json
+    secure: always
+
+  # 2. Service Worker (no-cache to allow PWA updates)
+  - url: /sw.js
+    static_files: sw.js
+    upload: sw.js
+    secure: always
+    http_headers:
+      Cache-Control: "no-cache, no-store, must-revalidate"
+
+  # 3. CSS Stylesheets (no-cache)
+  - url: /css/(.*)
+    static_files: css/\1
+    upload: css/(.*)
+    secure: always
+    http_headers:
+      Cache-Control: "no-cache, no-store, must-revalidate"
+
+  # 4. JavaScripts (no-cache)
+  - url: /js/(.*)
+    static_files: js/\1
+    upload: js/(.*)
+    secure: always
+    http_headers:
+      Cache-Control: "no-cache, no-store, must-revalidate"
+
+  # 5. App Icons
+  - url: /icons/(.*)
+    static_files: icons/\1
+    upload: icons/(.*)
+    secure: always
+
+  # 6. HTML Index
+  - url: /
+    static_files: index.html
+    upload: index.html
+    secure: always
+    http_headers:
+      Cache-Control: "no-cache, no-store, must-revalidate"
+
+  # 7. Fallback router
+  - url: /.*
+    static_files: index.html
+    upload: index.html
+    secure: always

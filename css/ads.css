@@ -1,0 +1,246 @@
+/* ═══════════════════════════════════════════════════════════
+   ads.css — Ad Banner & Modal Styles
+   Color Tube Master 3D
+═══════════════════════════════════════════════════════════ */
+
+/* ── Banner Wrapper ──────────────────────────────────── */
+.ad-banner-wrap {
+  width: 100%;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.25);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* Menu bottom banner */
+#ad-menu-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  min-height: 60px;
+  background: rgba(10,8,30,0.92);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(124,58,237,0.3);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+}
+
+/* Win screen banner */
+.ad-banner-win {
+  margin-top: 12px;
+  border-radius: 12px;
+  min-height: 60px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
+}
+
+/* ── Demo Banner (shown before AdSense approval) ────── */
+.ad-demo-banner {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  gap: 12px;
+}
+
+.ad-demo-text {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.55);
+  font-style: italic;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ad-demo-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.08);
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+/* ── Rewarded Ad Modal ───────────────────────────────── */
+.ad-modal-card {
+  width: min(360px, 92vw) !important;
+  padding: 24px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.ad-modal-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.ad-modal-header .ad-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.ad-modal-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.ad-modal-header p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.6);
+  text-align: center;
+}
+
+/* ── Ad Content Box (where the real ad renders) ────── */
+.ad-content-box {
+  width: 300px;
+  min-height: 120px;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* ── Placeholder box (demo mode) ─────────────────────── */
+.ad-placeholder-box {
+  width: 100%;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.ad-placeholder-icon {
+  font-size: 2.5rem;
+  animation: adPulse 1.5s ease-in-out infinite;
+}
+
+.ad-placeholder-text {
+  font-size: 1rem;
+  font-weight: 800;
+  color: rgba(255,255,255,0.7);
+}
+
+.ad-placeholder-sub {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.4);
+}
+
+@keyframes adPulse {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50%       { transform: scale(1.12); opacity: 1; }
+}
+
+/* ── Countdown bar ───────────────────────────────────── */
+.ad-countdown {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ad-bar {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.ad-bar #ad-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #7c3aed, #06b6d4);
+  border-radius: 99px;
+  transition: width 0.9s linear;
+}
+
+#ad-timer {
+  font-size: 1rem;
+  font-weight: 900;
+  color: rgba(255,255,255,0.6);
+  min-width: 20px;
+  text-align: center;
+}
+
+/* ── Space at bottom of menu for banner ─────────────── */
+#screen-menu {
+  padding-bottom: 130px;
+}
+
+/* ── Support / Share Bar ─────────────────────────────── */
+.support-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 16px 16px;
+  flex-wrap: wrap;
+}
+
+.btn-share {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: 99px;
+  border: 1.5px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.07);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Outfit', sans-serif;
+}
+
+.btn-share:hover, .btn-share:active {
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.4);
+  transform: translateY(-2px);
+}
+
+.btn-coffee {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: 99px;
+  background: linear-gradient(135deg, #FFDD00, #FF9500);
+  color: #1a1a1a;
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(255,200,0,0.3);
+  font-family: 'Outfit', sans-serif;
+}
+
+.btn-coffee:hover, .btn-coffee:active {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255,200,0,0.5);
+}

@@ -1,0 +1,169 @@
+/* ═══════════════════════════════════════════════════════════
+   THEMES CSS — 5 Premium Themes
+═══════════════════════════════════════════════════════════ */
+
+/* ────────────────────────────────
+   THEME: LAB (Default — Deep Purple/Violet)
+──────────────────────────────── */
+body.theme-lab {
+  --bg-primary:   linear-gradient(160deg, #0f0c29 0%, #1e1b4b 60%, #0f0c29 100%);
+  --accent-1: #7c3aed;
+  --accent-2: #ec4899;
+  --accent-3: #06b6d4;
+}
+body.theme-lab #screen-menu,
+body.theme-lab #screen-levels,
+body.theme-lab #screen-game,
+body.theme-lab #screen-win,
+body.theme-lab #screen-achievements,
+body.theme-lab #screen-shop,
+body.theme-lab #screen-settings,
+body.theme-lab #screen-leaderboard,
+body.theme-lab #screen-daily {
+  /* inherits default from main.css */
+}
+
+/* ────────────────────────────────
+   THEME: NEON (Cyberpunk — Magenta/Teal)
+──────────────────────────────── */
+body.theme-neon {
+  --violet:    #d946ef;
+  --violet-lt: #f0abfc;
+  --pink:      #2dd4bf;
+  --pink-lt:   #5eead4;
+  --cyan:      #a855f7;
+}
+body.theme-neon #screen-splash,
+body.theme-neon #screen-menu,
+body.theme-neon #screen-levels,
+body.theme-neon #screen-game,
+body.theme-neon #screen-win,
+body.theme-neon #screen-achievements,
+body.theme-neon #screen-shop,
+body.theme-neon #screen-settings,
+body.theme-neon #screen-leaderboard,
+body.theme-neon #screen-daily {
+  background: linear-gradient(160deg, #0c0015 0%, #1a0035 50%, #001520 100%) !important;
+}
+body.theme-neon .btn-play {
+  background: linear-gradient(135deg, #d946ef 0%, #7c3aed 40%, #06b6d4 100%);
+}
+body.theme-neon .menu-mesh::before { background: radial-gradient(circle, rgba(217,70,239,0.25) 0%, transparent 60%); }
+body.theme-neon .menu-mesh::after  { background: radial-gradient(circle, rgba(45,212,191,0.2) 0%, transparent 60%); }
+body.theme-neon .diff-tab.active, body.theme-neon .shop-tab.active, body.theme-neon .lb-tab.active {
+  background: linear-gradient(135deg, #d946ef, #2dd4bf);
+}
+body.theme-neon #screen-splash::before { background: radial-gradient(circle, rgba(217,70,239,0.35) 0%, transparent 70%); }
+
+/* ────────────────────────────────
+   THEME: SPACE (Cosmic — Blue/Orange)
+──────────────────────────────── */
+body.theme-space {
+  --violet:    #3b82f6;
+  --violet-lt: #93c5fd;
+  --pink:      #f97316;
+  --pink-lt:   #fdba74;
+  --cyan:      #22d3ee;
+}
+body.theme-space #screen-splash,
+body.theme-space #screen-menu,
+body.theme-space #screen-levels,
+body.theme-space #screen-game,
+body.theme-space #screen-win,
+body.theme-space #screen-achievements,
+body.theme-space #screen-shop,
+body.theme-space #screen-settings,
+body.theme-space #screen-leaderboard,
+body.theme-space #screen-daily {
+  background: linear-gradient(160deg, #020618 0%, #0a1628 50%, #0f0820 100%) !important;
+}
+body.theme-space .btn-play {
+  background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 40%, #f97316 100%);
+}
+body.theme-space .menu-mesh::before { background: radial-gradient(circle, rgba(59,130,246,0.2) 0%, transparent 60%); }
+body.theme-space .menu-mesh::after  { background: radial-gradient(circle, rgba(249,115,22,0.18) 0%, transparent 60%); }
+body.theme-space .diff-tab.active, body.theme-space .shop-tab.active, body.theme-space .lb-tab.active {
+  background: linear-gradient(135deg, #1d4ed8, #f97316);
+}
+body.theme-space #screen-splash::before { background: radial-gradient(circle, rgba(59,130,246,0.35) 0%, transparent 70%); }
+
+/* ────────────────────────────────
+   THEME: FANTASY (Magic — Emerald/Gold)
+──────────────────────────────── */
+body.theme-fantasy {
+  --violet:    #059669;
+  --violet-lt: #6ee7b7;
+  --pink:      #f59e0b;
+  --pink-lt:   #fcd34d;
+  --cyan:      #10b981;
+}
+body.theme-fantasy #screen-splash,
+body.theme-fantasy #screen-menu,
+body.theme-fantasy #screen-levels,
+body.theme-fantasy #screen-game,
+body.theme-fantasy #screen-win,
+body.theme-fantasy #screen-achievements,
+body.theme-fantasy #screen-shop,
+body.theme-fantasy #screen-settings,
+body.theme-fantasy #screen-leaderboard,
+body.theme-fantasy #screen-daily {
+  background: linear-gradient(160deg, #051208 0%, #0f2d1a 50%, #1a1202 100%) !important;
+}
+body.theme-fantasy .btn-play {
+  background: linear-gradient(135deg, #059669 0%, #10b981 40%, #f59e0b 100%);
+}
+body.theme-fantasy .menu-mesh::before { background: radial-gradient(circle, rgba(5,150,105,0.2) 0%, transparent 60%); }
+body.theme-fantasy .menu-mesh::after  { background: radial-gradient(circle, rgba(245,158,11,0.18) 0%, transparent 60%); }
+body.theme-fantasy .diff-tab.active, body.theme-fantasy .shop-tab.active, body.theme-fantasy .lb-tab.active {
+  background: linear-gradient(135deg, #059669, #f59e0b);
+}
+body.theme-fantasy .logo-title, body.theme-fantasy .win-title, body.theme-fantasy .screen-title {
+  background: linear-gradient(135deg, #6ee7b7, #fcd34d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+body.theme-fantasy #screen-splash::before { background: radial-gradient(circle, rgba(5,150,105,0.35) 0%, transparent 70%); }
+
+/* ────────────────────────────────
+   THEME: OCEAN (Deep Sea — Aqua/Coral)
+──────────────────────────────── */
+body.theme-ocean {
+  --violet:    #0891b2;
+  --violet-lt: #67e8f9;
+  --pink:      #f43f5e;
+  --pink-lt:   #fda4af;
+  --cyan:      #14b8a6;
+}
+body.theme-ocean #screen-splash,
+body.theme-ocean #screen-menu,
+body.theme-ocean #screen-levels,
+body.theme-ocean #screen-game,
+body.theme-ocean #screen-win,
+body.theme-ocean #screen-achievements,
+body.theme-ocean #screen-shop,
+body.theme-ocean #screen-settings,
+body.theme-ocean #screen-leaderboard,
+body.theme-ocean #screen-daily {
+  background: linear-gradient(160deg, #010d14 0%, #042030 50%, #0a1820 100%) !important;
+}
+body.theme-ocean .btn-play {
+  background: linear-gradient(135deg, #0e7490 0%, #06b6d4 40%, #f43f5e 100%);
+}
+body.theme-ocean .menu-mesh::before { background: radial-gradient(circle, rgba(8,145,178,0.22) 0%, transparent 60%); }
+body.theme-ocean .menu-mesh::after  { background: radial-gradient(circle, rgba(244,63,94,0.18) 0%, transparent 60%); }
+body.theme-ocean .diff-tab.active, body.theme-ocean .shop-tab.active, body.theme-ocean .lb-tab.active {
+  background: linear-gradient(135deg, #0e7490, #f43f5e);
+}
+body.theme-ocean #screen-splash::before { background: radial-gradient(circle, rgba(8,145,178,0.35) 0%, transparent 70%); }
+
+/* ── Shared: XP bar and play button adjust per theme ── */
+body.theme-neon    .xp-fill { background: linear-gradient(90deg, #d946ef, #2dd4bf); box-shadow: 0 0 10px rgba(217,70,239,0.6); }
+body.theme-space   .xp-fill { background: linear-gradient(90deg, #3b82f6, #f97316); box-shadow: 0 0 10px rgba(59,130,246,0.6); }
+body.theme-fantasy .xp-fill { background: linear-gradient(90deg, #059669, #f59e0b); box-shadow: 0 0 10px rgba(5,150,105,0.6); }
+body.theme-ocean   .xp-fill { background: linear-gradient(90deg, #0891b2, #f43f5e); box-shadow: 0 0 10px rgba(8,145,178,0.6); }
+
+body.theme-neon    .btn-primary { background: linear-gradient(135deg, #d946ef, #2dd4bf); box-shadow: 0 6px 24px rgba(217,70,239,0.5); }
+body.theme-space   .btn-primary { background: linear-gradient(135deg, #3b82f6, #f97316); box-shadow: 0 6px 24px rgba(59,130,246,0.5); }
+body.theme-fantasy .btn-primary { background: linear-gradient(135deg, #059669, #f59e0b); box-shadow: 0 6px 24px rgba(5,150,105,0.5); }
+body.theme-ocean   .btn-primary { background: linear-gradient(135deg, #0891b2, #f43f5e); box-shadow: 0 6px 24px rgba(8,145,178,0.5); }

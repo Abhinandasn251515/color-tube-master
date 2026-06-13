@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta name="theme-color" content="#7c3aed"/>
+  <meta name="description" content="Color Tube Master 3D — Sort colorful liquids into test tubes! 100 levels, real-time global leaderboard, daily challenges. Play free!"/>
+  <title>Color Tube Master 3D</title>
+
+  <!-- PWA / App Store -->
+  <link rel="manifest" href="/manifest.json"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Tube Master"/>
+  <meta name="application-name" content="Color Tube Master 3D"/>
+  <meta name="msapplication-TileColor" content="#7c3aed"/>
+
+  <!-- Open Graph (for sharing) -->
+  <meta property="og:title" content="Color Tube Master 3D"/>
+  <meta property="og:description" content="Sort colorful liquids into tubes! 100 levels, live leaderboard. Play free!"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://color-tube-master.web.app"/>
+  <meta property="og:image" content="https://color-tube-master.web.app/icons/splash.png"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+
+  <!-- Apple Touch Icons -->
+  <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152.png"/>
+  <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192.png"/>
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png"/>
+  <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png"/>
+
+  <!-- Firebase SDK (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/main.css"/>
+  <link rel="stylesheet" href="css/tubes.css"/>
+  <link rel="stylesheet" href="css/ui.css"/>
+  <link rel="stylesheet" href="css/themes.css"/>
+  <link rel="stylesheet" href="css/auth.css"/>
+  <link rel="stylesheet" href="css/ads.css"/>
+</head>
+<body class="theme-lab">
+
+<!-- ════════ BACKGROUND ════════ -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- ══════════════════════════════════════
+     AUTH OVERLAY (shown before menu)
+══════════════════════════════════════ -->
+<div id="auth-overlay" style="display:none">
+
+  <!-- Logo -->
+  <div class="auth-logo">
+    <div style="font-size:2.8rem;margin-bottom:10px;filter:drop-shadow(0 0 20px rgba(124,58,237,0.6))">🧪</div>
+    <h1>Color Tube<br/>Master 3D</h1>
+    <div class="auth-logo-sub">Sort · Mix · Master the World</div>
+  </div>
+
+  <!-- Benefit pills -->
+  <div class="auth-benefits">
+    <div class="benefit-pill">☁️ Cloud Save</div>
+    <div class="benefit-pill">🏆 Real-Time Leaderboard</div>
+    <div class="benefit-pill">📅 Daily Rewards</div>
+    <div class="benefit-pill">🎮 Cross-Device Play</div>
+  </div>
+
+  <!-- Auth Card -->
+  <div class="auth-card">
+
+    <!-- Tabs -->
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="login">Login</button>
+      <button class="auth-tab" data-tab="signup">Sign Up</button>
+    </div>
+
+    <!-- Body -->
+    <div class="auth-body">
+
+      <!-- Google Sign In -->
+      <button class="btn-google" id="btn-google-signin">
+        <svg class="google-icon" viewBox="0 0 24 24">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Continue with Google
+      </button>
+
+      <div class="auth-divider">or</div>
+
+      <!-- Error / Success -->
+      <div class="auth-error" id="auth-error"></div>
+      <div class="auth-success" id="auth-success"></div>
+
+      <!-- LOGIN fields -->
+      <div id="auth-login-fields" style="display:flex;flex-direction:column;gap:12px">
+        <div class="auth-field">
+          <div class="auth-label">Email</div>
+          <div class="auth-input-wrap">
+            <input type="email" class="auth-input" id="auth-email" placeholder="you@example.com" autocomplete="email"/>
+          </div>
+        </div>
+        <div class="auth-field">
+          <div class="auth-label">Password</div>
+          <div class="auth-input-wrap">
+            <input type="password" class="auth-input" id="auth-password" placeholder="••••••••" autocomplete="current-password"/>
+            <button class="auth-pwd-toggle" id="pwd-toggle" type="button" title="Show/hide password">👁️</button>
+          </div>
+        </div>
+        <div class="auth-switch">
+          <button type="button" id="forgot-password-btn">Forgot password?</button>
+        </div>
+      </div>
+
+      <!-- SIGN UP fields -->
+      <div id="auth-signup-fields" style="display:none;flex-direction:column;gap:12px">
+        <div class="auth-field">
+          <div class="auth-label">Display Name</div>
+          <input type="text" class="auth-input" id="auth-name" placeholder="Your game name" maxlength="20" autocomplete="nickname"/>
+        </div>
+        <div class="avatar-section">
+          <div class="avatar-label">Pick your avatar</div>
+          <div class="avatar-grid" id="avatar-grid"></div>
+        </div>
+        <div class="auth-field">
+          <div class="auth-label">Email</div>
+          <input type="email" class="auth-input" id="auth-email-signup" placeholder="you@example.com" autocomplete="email"/>
+        </div>
+        <div class="auth-field">
+          <div class="auth-label">Password</div>
+          <div class="auth-input-wrap">
+            <input type="password" class="auth-input" id="auth-password-signup" placeholder="Min 6 characters" autocomplete="new-password"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button class="btn-auth-submit" id="auth-submit-btn">Login</button>
+
+    </div><!-- /auth-body -->
+  </div><!-- /auth-card -->
+
+  <!-- Guest -->
+  <div class="auth-guest">
+    <button class="btn-guest" id="btn-guest-play">Skip — Play as Guest</button>
+  </div>
+
+  <!-- ── MENU BANNER AD ── -->
+  <div class="ad-banner-wrap" id="ad-menu-banner">
+    <!-- Real AdSense banner (auto-enabled after CONFIG.enabled = true) -->
+    <ins class="adsbygoogle adsense-unit"
+         style="display:none"
+         data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+         data-ad-slot="1234567890"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+  </div>
+
+</div><!-- /auth-overlay -->
+
+<!-- ════════ PROFILE MODAL ════════ -->
+<div class="profile-modal" id="profile-modal" style="display:none">
+  <div class="profile-card">
+    <div class="profile-header">
+      <div class="profile-avatar-big" id="profile-avatar-display" title="Click to change">🧪</div>
+      <div class="profile-name" id="profile-name-display">Player</div>
+      <div class="profile-email" id="profile-email-display">guest@local</div>
+    </div>
+
+    <div class="profile-stats">
+      <div class="profile-stat">
+        <div class="profile-stat-val" id="profile-xp-val">0</div>
+        <div class="profile-stat-lbl">XP</div>
+      </div>
+      <div class="profile-stat">
+        <div class="profile-stat-val" id="profile-lvl-val">0</div>
+        <div class="profile-stat-lbl">Levels</div>
+      </div>
+      <div class="profile-stat">
+        <div class="profile-stat-val" id="profile-coins-val">0</div>
+        <div class="profile-stat-lbl">Coins</div>
+      </div>
+    </div>
+
+    <!-- Avatar edit section (toggle) -->
+    <div class="avatar-edit-section" id="profile-avatar-edit">
+      <div class="avatar-edit-title">Choose Avatar</div>
+      <div class="avatar-edit-grid" id="profile-avatar-grid"></div>
+    </div>
+
+    <div class="profile-actions">
+      <button class="btn-profile-signout" id="profile-signout-btn">🚪 Sign Out</button>
+      <button class="btn-profile-edit"    id="profile-login-btn"   style="display:none">🔑 Login / Sign Up</button>
+      <button class="btn-profile-close"   id="profile-close-btn">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SPLASH ════════ -->
+<div class="screen active" id="screen-splash">
+  <div class="splash-logo">
+    <div class="logo-tubes">
+      <div class="logo-tube t1">
+        <div class="ll c-purple"></div>
+        <div class="ll c-cyan"></div>
+        <div class="ll c-pink"></div>
+        <div class="ll c-yellow"></div>
+      </div>
+      <div class="logo-tube t2" style="height:120px">
+        <div class="ll c-blue"></div>
+        <div class="ll c-blue"></div>
+        <div class="ll c-blue"></div>
+        <div class="ll c-blue"></div>
+      </div>
+      <div class="logo-tube t3">
+        <div class="ll c-orange"></div>
+        <div class="ll c-green"></div>
+        <div class="ll c-red"></div>
+        <div class="ll c-lime"></div>
+      </div>
+    </div>
+    <div class="logo-title">Color Tube<span>Master 3D</span></div>
+    <div class="logo-tagline">Sort · Mix · Master</div>
+  </div>
+  <div class="splash-progress">
+    <div class="splash-bar"><div id="splash-fill"></div></div>
+    <div class="splash-loading">Preparing tubes...</div>
+  </div>
+</div>
+
+<!-- ════════ MAIN MENU ════════ -->
+<div class="screen" id="screen-menu">
+  <div class="menu-mesh"></div>
+
+  <div class="menu-header">
+    <div class="player-info">
+      <div class="player-avatar" id="menu-player-avatar" title="View profile" style="cursor:pointer">🧪</div>
+      <div>
+        <div class="player-name" id="menu-player-name">Puzzle Master</div>
+        <div style="display:flex;align-items:center;gap:5px;">
+          <div class="player-rank" id="menu-player-rank">🔵 Beginner</div>
+          <div class="user-auth-badge guest" id="auth-status-badge">👤 Guest</div>
+        </div>
+      </div>
+    </div>
+    <div class="currency-bar">
+      <div class="currency"><span class="cur-icon">🪙</span><span id="coin-count">0</span></div>
+      <div class="currency"><span class="cur-icon">💎</span><span id="gem-count">0</span></div>
+    </div>
+  </div>
+
+  <div class="xp-section">
+    <div class="xp-bar-wrap">
+      <div class="xp-bar"><div class="xp-fill" id="xp-fill"></div></div>
+      <div class="xp-label" id="xp-label">0 XP</div>
+    </div>
+  </div>
+
+  <div class="menu-hero">
+    <div class="menu-logo-small">
+      <h2>Color Tube Master</h2>
+      <div class="sub">The Ultimate Sorting Puzzle</div>
+    </div>
+    <button class="btn-play" id="btn-play">
+      <span class="play-icon">▶</span> PLAY
+    </button>
+    <div class="login-reward-banner" id="login-reward-banner" style="display:none">
+      <div class="lr-left">🎁 Daily reward ready!</div>
+      <button class="lr-claim" id="lr-claim-btn">Claim</button>
+    </div>
+  </div>
+
+  <div class="menu-main">
+    <div class="menu-grid">
+      <button class="menu-tile" id="btn-level-select"><div class="tile-icon">🗺️</div><div class="tile-label">Level<br/>Select</div></button>
+      <button class="menu-tile" id="btn-daily">
+        <div class="tile-icon">📅</div>
+        <div class="tile-label">Daily<br/>Challenge</div>
+        <div class="tile-badge" id="daily-badge">NEW</div>
+      </button>
+      <button class="menu-tile" id="btn-achievements"><div class="tile-icon">🏆</div><div class="tile-label">Achieve-<br/>ments</div></button>
+      <button class="menu-tile" id="btn-shop"><div class="tile-icon">🛍️</div><div class="tile-label">Shop</div></button>
+      <button class="menu-tile" id="btn-leaderboard"><div class="tile-icon">🌍</div><div class="tile-label">Leader-<br/>board</div></button>
+      <button class="menu-tile" id="btn-settings"><div class="tile-icon">⚙️</div><div class="tile-label">Settings</div></button>
+      <button class="menu-tile" id="btn-infinite"><div class="tile-icon">♾️</div><div class="tile-label">Infinite<br/>Mode</div></button>
+    </div>
+  </div>
+
+  <!-- Share + Support Bar -->
+  <div class="support-bar">
+    <button class="btn-share" id="btn-share">📤 Share Game</button>
+    <a href="https://buymeacoffee.com/colortubemaster" target="_blank" class="btn-coffee">☕ Support Dev</a>
+  </div>
+
+</div>
+
+<!-- ════════ LEVEL SELECT ════════ -->
+<div class="screen" id="screen-levels">
+  <div class="screen-header">
+    <button class="btn-back" id="levels-back">←</button>
+    <div class="screen-title">Select Level</div>
+    <div class="xp-label" id="levels-progress-text">0/100</div>
+  </div>
+  <div class="difficulty-tabs">
+    <button class="diff-tab active" data-diff="beginner">🟢 Beginner</button>
+    <button class="diff-tab" data-diff="easy">🔵 Easy</button>
+    <button class="diff-tab" data-diff="medium">🟡 Medium</button>
+    <button class="diff-tab" data-diff="hard">🔴 Hard</button>
+    <button class="diff-tab" data-diff="expert">⭐ Expert</button>
+  </div>
+  <div class="levels-grid" id="levels-grid"></div>
+</div>
+
+<!-- ════════ GAME SCREEN ════════ -->
+<div class="screen" id="screen-game">
+  <div class="game-hud">
+    <div class="hud-left">
+      <button class="btn-hud" id="btn-game-menu" title="Menu">☰</button>
+      <div class="hud-level-info">
+        <div class="hud-level-num" id="hud-level">Level 1</div>
+        <div class="hud-difficulty diff-badge diff-beginner" id="hud-diff">Beginner</div>
+      </div>
+    </div>
+    <div class="hud-center">
+      <div class="hud-stat">
+        <div class="hud-stat-val" id="hud-moves">0</div>
+        <div class="hud-stat-lbl">Moves</div>
+      </div>
+      <div class="hud-stat">
+        <div class="hud-timer" id="hud-timer">0:00</div>
+        <div class="hud-stat-lbl">Time</div>
+      </div>
+      <div class="hud-stat">
+        <div class="hud-stat-val" id="hud-best">--</div>
+        <div class="hud-stat-lbl">Best</div>
+      </div>
+    </div>
+    <div class="hud-right">
+      <button class="btn-hud btn-hud-blue"   id="btn-undo"  title="Undo">↩</button>
+      <button class="btn-hud btn-hud-yellow"  id="btn-hint"  title="Hint">💡</button>
+      <div class="hint-badge" id="hint-badge">3</div>
+    </div>
+  </div>
+
+  <div class="game-area" id="game-area">
+    <div class="tubes-container" id="tubes-container"></div>
+    <canvas id="pour-canvas"></canvas>
+  </div>
+
+  <div class="game-footer">
+    <button class="btn-action" id="btn-restart">🔄<div class="btn-action-sub">Restart</div></button>
+    <button class="btn-action btn-action-next" id="btn-autosolve">🤖<div class="btn-action-sub">Auto Solve</div></button>
+  </div>
+</div>
+
+<!-- ════════ WIN SCREEN ════════ -->
+<div class="screen" id="screen-win">
+  <canvas id="confetti-canvas"></canvas>
+  <div class="win-card">
+    <div class="win-emoji">🎉</div>
+    <div class="win-title">Level Clear!</div>
+    <div class="win-stars">
+      <div class="star" id="star1">⭐</div>
+      <div class="star" id="star2">⭐</div>
+      <div class="star" id="star3">⭐</div>
+    </div>
+    <div class="win-stats">
+      <div class="win-stat"><div class="win-stat-val" id="win-moves">0</div><div class="win-stat-lbl">Moves</div></div>
+      <div class="win-stat"><div class="win-stat-val" id="win-time">0:00</div><div class="win-stat-lbl">Time</div></div>
+    </div>
+    <div class="win-rewards">
+      <div class="win-reward" id="win-xp">+0 XP</div>
+      <div class="win-reward" id="win-coins">+0 🪙</div>
+      <div class="win-reward" id="win-gems">+0 💎</div>
+    </div>
+    <div class="win-actions">
+      <button class="btn-secondary" id="win-menu">🏠 Menu</button>
+      <button class="btn-primary"   id="win-next">Next ▶</button>
+    </div>
+    <!-- Win screen banner ad -->
+    <div class="ad-banner-wrap ad-banner-win" id="ad-win-banner"></div>
+  </div>
+</div>
+
+<!-- ════════ ACHIEVEMENTS ════════ -->
+<div class="screen" id="screen-achievements">
+  <div class="screen-header">
+    <button class="btn-back" id="ach-back">←</button>
+    <div class="screen-title">🏆 Achievements</div>
+  </div>
+  <div class="achievements-grid" id="achievements-grid"></div>
+</div>
+
+<!-- ════════ SHOP ════════ -->
+<div class="screen" id="screen-shop">
+  <div class="screen-header">
+    <button class="btn-back" id="shop-back">←</button>
+    <div class="screen-title">🛍️ Shop</div>
+    <div style="display:flex;gap:6px;align-items:center;font-size:0.85rem;font-weight:800;">🪙 <span id="shop-coins">0</span> 💎 <span id="shop-gems">0</span></div>
+  </div>
+  <div class="shop-tabs">
+    <button class="shop-tab active" data-shop="themes">🎨 Themes</button>
+    <button class="shop-tab" data-shop="skins">🧪 Skins</button>
+    <button class="shop-tab" data-shop="boosts">⚡ Boosts</button>
+  </div>
+  <div class="shop-grid" id="shop-grid"></div>
+</div>
+
+<!-- ════════ SETTINGS ════════ -->
+<div class="screen" id="screen-settings">
+  <div class="screen-header">
+    <button class="btn-back" id="settings-back">←</button>
+    <div class="screen-title">⚙️ Settings</div>
+  </div>
+  <div class="settings-list">
+    <div class="settings-section">
+      <div class="settings-section-title">Profile</div>
+      <div class="settings-item">Player Name<input class="settings-input" id="player-name-input" placeholder="Your name" maxlength="16"/></div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-section-title">Audio</div>
+      <div class="settings-item">Sound Effects<label class="toggle"><input type="checkbox" id="toggle-sfx" checked/><div class="slider"></div></label></div>
+      <div class="settings-item">Music<label class="toggle"><input type="checkbox" id="toggle-music" checked/><div class="slider"></div></label></div>
+      <div class="settings-item">Haptic Feedback<label class="toggle"><input type="checkbox" id="toggle-haptic" checked/><div class="slider"></div></label></div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-section-title">Themes</div>
+      <div class="theme-picker">
+        <button class="theme-opt active" data-theme="lab"     data-unlock="0">🔬 Lab</button>
+        <button class="theme-opt"        data-theme="neon"    data-unlock="20">⚡ Neon</button>
+        <button class="theme-opt"        data-theme="space"   data-unlock="40">🚀 Space</button>
+        <button class="theme-opt"        data-theme="fantasy" data-unlock="60">🧙 Fantasy</button>
+        <button class="theme-opt"        data-theme="ocean"   data-unlock="80">🌊 Ocean</button>
+      </div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-section-title">Account</div>
+      <div class="settings-item">Progress<span class="settings-val" id="settings-progress">0/100</span></div>
+      <div class="settings-item">Version<span class="settings-val">v1.0.0</span></div>
+    </div>
+    <button class="btn-danger" id="btn-reset">⚠️ Reset All Progress</button>
+  </div>
+</div>
+
+<!-- ════════ LEADERBOARD ════════ -->
+<div class="screen" id="screen-leaderboard">
+  <div class="screen-header">
+    <button class="btn-back" id="lb-back">←</button>
+    <div class="screen-title">🌍 Leaderboard</div>
+    <div class="lb-live-badge" id="lb-live-badge">
+      <span class="online-dot"></span> LIVE
+    </div>
+  </div>
+  <div class="lb-tabs">
+    <button class="lb-tab active" data-lb="global">🌐 Global</button>
+    <button class="lb-tab" data-lb="friends">👥 Friends</button>
+  </div>
+  <div class="lb-list" id="lb-list">
+    <div class="lb-empty">Loading leaderboard... 🌐</div>
+  </div>
+</div>
+
+<!-- ════════ DAILY CHALLENGE ════════ -->
+<div class="screen" id="screen-daily">
+  <div class="screen-header">
+    <button class="btn-back" id="daily-back">←</button>
+    <div class="screen-title">📅 Daily</div>
+  </div>
+  <div class="daily-content">
+    <div class="daily-info-card">
+      <div class="daily-icon">🧪</div>
+      <div class="daily-title" id="daily-title">Today's Challenge</div>
+      <div class="daily-date" id="daily-date">Loading...</div>
+      <div class="daily-reward-preview">🏆 Bonus: 100 XP + 3 💎</div>
+      <button class="btn-primary" id="btn-play-daily" style="width:100%;max-width:240px;text-align:center;">Play Now</button>
+    </div>
+    <div class="daily-streak-card">
+      <div class="streak-title">🔥 Daily Streak</div>
+      <div class="streak-days" id="streak-days"></div>
+      <div class="streak-count">Day <span id="streak-count">1</span> streak — keep it up!</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ MODALS ════════ -->
+<div class="modal-overlay" id="modal-pause" style="display:none">
+  <div class="modal-card">
+    <div style="font-size:3rem">⏸️</div>
+    <h3>Paused</h3>
+    <p>Your progress is saved!</p>
+    <button class="btn-primary"   id="pause-resume"  style="width:100%;text-align:center;">▶ Resume</button>
+    <button class="btn-secondary" id="pause-restart" style="width:100%;text-align:center;">🔄 Restart</button>
+    <button class="btn-secondary" id="pause-levels"  style="width:100%;text-align:center;">📋 Levels</button>
+    <button class="btn-secondary" id="pause-menu"    style="width:100%;text-align:center;">🏠 Main Menu</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-ad" style="display:none">
+  <div class="modal-card ad-modal-card">
+    <div class="ad-modal-header">
+      <div class="ad-icon">📺</div>
+      <h3 id="ad-title">Watch an Ad?</h3>
+      <p id="ad-desc">Watch a short video to get your reward!</p>
+    </div>
+    <!-- Ad content box -->
+    <div class="ad-content-box" id="ad-content-box"></div>
+    <!-- Countdown bar -->
+    <div class="ad-countdown">
+      <div class="ad-bar"><div id="ad-bar-fill"></div></div>
+      <div id="ad-timer">5</div>
+    </div>
+    <button class="btn-primary" id="ad-confirm" disabled style="width:100%;text-align:center;">Claim Reward</button>
+    <button class="btn-ghost"   id="ad-cancel"          style="width:100%;text-align:center;">No thanks</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-login-reward" style="display:none">
+  <div class="modal-card reward-card">
+    <div class="rc-glow"></div>
+    <div style="font-size:3rem">🎁</div>
+    <h3>Daily Reward</h3>
+    <div class="rc-day">Day <span id="rc-day-num">1</span></div>
+    <div class="reward-items" id="rc-items"></div>
+    <button class="btn-primary" id="rc-claim" style="width:100%;text-align:center;">🎉 Claim!</button>
+  </div>
+</div>
+
+<div class="achievement-toast" id="achievement-toast" style="display:none">
+  <div class="at-icon" id="at-icon">🏆</div>
+  <div><div class="at-title">Achievement Unlocked!</div><div class="at-name" id="at-name"></div></div>
+</div>
+
+<!-- ════════ SCRIPTS ════════ -->
+<script src="js/firebase-config.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/levels.js"></script>
+<script src="js/solver.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/progression.js"></script>
+<script src="js/animations.js"></script>
+<script src="js/renderer.js"></script>
+<script src="js/game.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/leaderboard-service.js"></script>
+<script src="js/auth-ui.js"></script>
+<script src="js/ads.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+
+<!-- Service Worker Registration -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('[SW] Registered:', reg.scope))
+        .catch(err => console.warn('[SW] Registration failed:', err));
+    });
+  }
+</script>
+
+</body>
+</html>

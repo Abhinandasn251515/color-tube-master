@@ -4,7 +4,10 @@
     "ignore": [
       "firebase.json",
       ".firebaserc",
-      ".gitignore"
+      ".gitignore",
+      "android-app/**",
+      "jdk17/**",
+      "*.apk"
     ],
     "rewrites": [
       {

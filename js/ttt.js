@@ -29,24 +29,11 @@ const TicTacToe3D = (() => {
     const cells = document.querySelectorAll('.ttt-cell');
     cells.forEach(cell => {
       const idx = parseInt(cell.dataset.index);
-
-      // touchstart for instant mobile response
-      cell.addEventListener('touchstart', (e) => {
-        e.preventDefault(); // Stops ghost click
-        onCellActivated(idx);
-      }, { passive: false });
-
-      // click for desktop
       cell.addEventListener('click', () => {
-        onCellActivated(idx);
+        handleCellClick(idx);
       });
     });
 
-    document.getElementById('ttt-reset')?.addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      Audio.click();
-      resetBoard();
-    }, { passive: false });
     document.getElementById('ttt-reset')?.addEventListener('click', () => {
       Audio.click();
       resetBoard();
@@ -64,17 +51,6 @@ const TicTacToe3D = (() => {
         resetBoard();
       });
     });
-  }
-
-  // Debounce guard so touchstart+click don't double-fire
-  let lastActivated = -1;
-  let lastActivatedTime = 0;
-  function onCellActivated(index) {
-    const now = Date.now();
-    if (index === lastActivated && now - lastActivatedTime < 600) return;
-    lastActivated = index;
-    lastActivatedTime = now;
-    handleCellClick(index);
   }
 
   // ── Game Mode ─────────────────────────────────────────

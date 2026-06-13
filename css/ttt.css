@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   ttt.css — Tic-Tac-Toe Premium Stylesheet (Fixed)
+   ttt.css — Tic-Tac-Toe Premium Stylesheet (Fixed & Enhanced)
    Color Tube Master 3D - Arcade Expansion
    ═══════════════════════════════════════════════════════════ */
 
@@ -8,98 +8,138 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: linear-gradient(160deg, #0f0c29 0%, #1a0a3c 50%, #0c1445 100%);
+  background: radial-gradient(circle at 50% 30%, #1c0a35 0%, #0c081e 70%, #030209 100%);
   min-height: 100%;
   overflow-y: auto;
-  padding-bottom: 20px;
+  padding-bottom: 30px;
+  font-family: 'Outfit', sans-serif;
+  position: fixed;
+  inset: 0;
+  z-index: 10;
 }
 
 /* ── HUD ────────────────────────────────────────────── */
 .ttt-hud {
   width: 100%;
-  max-width: 380px;
-  padding: 12px 16px 8px;
+  max-width: 400px;
+  padding: 15px 20px 8px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .ttt-players {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 18px;
-  padding: 10px 18px;
-  backdrop-filter: blur(12px);
-  gap: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 12px 20px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  gap: 10px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .ttt-player {
   display: flex;
   align-items: center;
-  gap: 10px;
-  opacity: 0.45;
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  gap: 12px;
+  opacity: 0.35;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   flex: 1;
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid transparent;
 }
 
 .ttt-player:last-child {
   flex-direction: row-reverse;
 }
 
+/* Active Player Glows */
 .ttt-player.active {
   opacity: 1;
-  transform: scale(1.04);
+  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+#ttt-p1-card.active {
+  border-color: rgba(239, 68, 68, 0.3);
+  box-shadow: 
+    0 0 15px rgba(239, 68, 68, 0.15),
+    inset 0 0 10px rgba(239, 68, 68, 0.05);
+  animation: p1Breath 1.5s ease-in-out infinite alternate;
+}
+
+#ttt-p2-card.active {
+  border-color: rgba(6, 182, 212, 0.3);
+  box-shadow: 
+    0 0 15px rgba(6, 182, 212, 0.15),
+    inset 0 0 10px rgba(6, 182, 212, 0.05);
+  animation: p2Breath 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes p1Breath {
+  from { box-shadow: 0 0 12px rgba(239, 68, 68, 0.1), inset 0 0 5px rgba(239, 68, 68, 0.02); }
+  to   { box-shadow: 0 0 20px rgba(239, 68, 68, 0.25), inset 0 0 12px rgba(239, 68, 68, 0.1); }
+}
+
+@keyframes p2Breath {
+  from { box-shadow: 0 0 12px rgba(6, 182, 212, 0.1), inset 0 0 5px rgba(6, 182, 212, 0.02); }
+  to   { box-shadow: 0 0 20px rgba(6, 182, 212, 0.25), inset 0 0 12px rgba(6, 182, 212, 0.1); }
 }
 
 .ttt-badge {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 900;
-  font-size: 1rem;
+  font-size: 0.9rem;
   flex-shrink: 0;
 }
 
 .p1-badge {
   background: linear-gradient(135deg, #ef4444, #b91c1c);
   color: #fff;
-  box-shadow: 0 0 14px rgba(239, 68, 68, 0.55);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
 }
 
 .p2-badge {
   background: linear-gradient(135deg, #06b6d4, #0891b2);
   color: #fff;
-  box-shadow: 0 0 14px rgba(6, 182, 212, 0.55);
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.6);
 }
 
 .ttt-name {
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   font-weight: 800;
-  color: rgba(255, 255, 255, 0.8);
-  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.03em;
 }
 
 .ttt-score {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 900;
   color: #fff;
-  font-family: 'Courier New', monospace;
+  font-family: 'Outfit', sans-serif;
   min-width: 24px;
   text-align: center;
 }
 
 .ttt-vs {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 900;
-  color: rgba(255, 255, 255, 0.25);
-  letter-spacing: 0.15em;
-  padding: 0 6px;
+  color: rgba(255, 255, 255, 0.2);
+  letter-spacing: 0.2em;
+  padding: 0 4px;
   flex-shrink: 0;
 }
 
@@ -114,21 +154,21 @@
 
 .ttt-toggle-group {
   display: flex;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 99px;
-  padding: 3px;
-  gap: 2px;
+  padding: 4px;
+  gap: 4px;
 }
 
 .ttt-toggle-btn {
-  padding: 6px 14px;
+  padding: 6px 16px;
   border-radius: 99px;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 800;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.45);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   border: none;
   background: transparent;
   touch-action: manipulation;
@@ -138,56 +178,57 @@
 .ttt-toggle-btn.active {
   background: linear-gradient(135deg, #7c3aed, #a855f7);
   color: #fff;
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.45);
 }
 
 /* ── STATUS MSG ─────────────────────────────────────── */
 .ttt-status-wrap {
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
   text-align: center;
-  padding: 8px 16px 4px;
+  padding: 6px 20px 4px;
 }
 
 .ttt-status {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 800;
-  color: rgba(255,255,255,0.8);
+  color: rgba(255, 255, 255, 0.85);
   text-align: center;
-  letter-spacing: 0.06em;
-  padding: 6px 20px;
+  letter-spacing: 0.04em;
+  padding: 8px 22px;
   border-radius: 99px;
   display: inline-block;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
   transition: all 0.3s ease;
 }
 
 .ttt-status.win {
-  color: #fcd34d;
-  font-size: 1.1rem;
-  background: rgba(252, 211, 77, 0.1);
-  border-color: rgba(252, 211, 77, 0.3);
-  box-shadow: 0 0 20px rgba(252, 211, 77, 0.25);
-  animation: statusPulse 0.6s ease infinite alternate;
+  color: #fbbf24;
+  font-size: 1.05rem;
+  background: rgba(251, 191, 36, 0.1);
+  border-color: rgba(251, 191, 36, 0.35);
+  box-shadow: 0 0 25px rgba(251, 191, 36, 0.2);
+  animation: statusPulse 0.8s ease infinite alternate;
 }
 
 .ttt-status.lose {
   color: #f87171;
   background: rgba(248, 113, 113, 0.1);
-  border-color: rgba(248, 113, 113, 0.3);
-  box-shadow: 0 0 20px rgba(248, 113, 113, 0.2);
+  border-color: rgba(248, 113, 113, 0.35);
+  box-shadow: 0 0 25px rgba(248, 113, 113, 0.15);
 }
 
 @keyframes statusPulse {
-  from { transform: scale(1); box-shadow: 0 0 15px rgba(252,211,77,0.25); }
-  to   { transform: scale(1.04); box-shadow: 0 0 30px rgba(252,211,77,0.5); }
+  from { transform: scale(1); }
+  to   { transform: scale(1.05); }
 }
 
 /* ── BOARD CONTAINER ─────────────────────────────────── */
 .ttt-board-container {
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -195,12 +236,12 @@
   flex-shrink: 0;
 }
 
-/* ── THE BOARD (FLAT, NO 3D TRANSFORM = clickable!) ─── */
+/* ── THE BOARD (Cyber Glass Grid) ────────────────────── */
 .ttt-board-wrapper {
-  width: 90vw;
-  height: 90vw;
-  max-width: 320px;
-  max-height: 320px;
+  width: 86vw;
+  height: 86vw;
+  max-width: 330px;
+  max-height: 330px;
   position: relative;
 }
 
@@ -210,54 +251,50 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  gap: 10px;
-  padding: 10px;
-  background: rgba(124, 58, 237, 0.08);
-  border: 2px solid rgba(124, 58, 237, 0.3);
-  border-radius: 24px;
+  gap: 12px;
+  padding: 14px;
+  background: rgba(15, 10, 35, 0.6);
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  border-radius: 28px;
   position: relative;
   box-shadow:
-    0 0 0 1px rgba(124,58,237,0.1),
-    0 20px 60px rgba(0,0,0,0.5),
-    inset 0 0 40px rgba(124,58,237,0.06);
+    0 15px 45px rgba(0, 0, 0, 0.6),
+    0 0 30px rgba(124, 58, 237, 0.15),
+    inset 0 0 25px rgba(124, 58, 237, 0.05);
 }
 
-/* Grid dividers (decorative lines) */
+/* Decorative cybernetic corner lines */
 .ttt-board::before,
 .ttt-board::after {
   content: '';
   position: absolute;
-  background: rgba(124, 58, 237, 0.2);
-  border-radius: 4px;
+  background: rgba(124, 58, 237, 0.15);
   pointer-events: none;
 }
 .ttt-board::before {
-  /* Vertical dividers */
-  top: 12px; bottom: 12px;
+  top: 15px; bottom: 15px;
   left: calc(33.33% + 2px);
   width: 1px;
-  box-shadow: calc(33.33% - 4px) 0 0 rgba(124,58,237,0.2);
+  box-shadow: calc(33.33% - 5px) 0 0 rgba(124, 58, 237, 0.15);
 }
 .ttt-board::after {
-  /* Horizontal dividers */
-  left: 12px; right: 12px;
+  left: 15px; right: 15px;
   top: calc(33.33% + 2px);
   height: 1px;
-  box-shadow: 0 calc(33.33% - 4px) 0 rgba(124,58,237,0.2);
+  box-shadow: 0 calc(33.33% - 5px) 0 rgba(124, 58, 237, 0.15);
 }
 
-/* ── BOARD CELLS ─────────────────────────────────────── */
+/* ── BOARD CELLS (Glass Buttons) ─────────────────────── */
 .ttt-cell {
-  background: rgba(255, 255, 255, 0.025);
-  border: 1.5px solid rgba(255, 255, 255, 0.06);
-  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
   position: relative;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
-  /* CRITICAL: touch-action must be set for mobile */
+  transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
@@ -265,68 +302,100 @@
 }
 
 .ttt-cell:hover {
-  background: rgba(124, 58, 237, 0.1);
-  border-color: rgba(124, 58, 237, 0.4);
+  background: rgba(124, 58, 237, 0.08);
+  border-color: rgba(124, 58, 237, 0.35);
+  transform: translateY(-4px);
+  box-shadow: 
+    0 8px 20px rgba(124, 58, 237, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .ttt-cell:active {
-  transform: scale(0.93);
-  background: rgba(124, 58, 237, 0.18);
+  transform: translateY(0) scale(0.95);
+  background: rgba(124, 58, 237, 0.14);
 }
 
-/* ── PIECES (X and O) ────────────────────────────────── */
+/* ── PIECES (Custom Neon Vector Shapes) ────────────────── */
 .ttt-cell .piece {
   position: absolute;
-  inset: 8px;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(1.4rem, 8vw, 2.2rem);
-  font-weight: 900;
-  border-radius: 10px;
-  user-select: none;
-  -webkit-user-select: none;
-  animation: piecePop 0.28s cubic-bezier(0.34,1.56,0.64,1) forwards;
   pointer-events: none;
 }
 
+/* X Piece - Neon Red Crossed Blades */
 .ttt-cell .piece.x-piece {
-  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
-  color: #fff;
-  box-shadow:
-    0 4px 15px rgba(239,68,68,0.45),
-    inset 0 1px 0 rgba(255,255,255,0.2);
-  text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  width: 50%;
+  height: 50%;
+  position: relative;
+  animation: piecePop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
+.ttt-cell .piece.x-piece::before,
+.ttt-cell .piece.x-piece::after {
+  content: '';
+  position: absolute;
+  background: linear-gradient(135deg, #ff416c, #ff4b2b);
+  border-radius: 99px;
+  box-shadow: 
+    0 0 12px #ff416c,
+    0 0 25px rgba(255, 65, 108, 0.6);
+}
+
+.ttt-cell .piece.x-piece::before {
+  width: 100%;
+  height: 6px;
+  top: calc(50% - 3px);
+  left: 0;
+  transform: rotate(45deg);
+}
+
+.ttt-cell .piece.x-piece::after {
+  width: 100%;
+  height: 6px;
+  top: calc(50% - 3px);
+  left: 0;
+  transform: rotate(-45deg);
+}
+
+/* O Piece - Neon Cyan Ring */
 .ttt-cell .piece.o-piece {
-  background: linear-gradient(135deg, #06b6d4 0%, #0e7490 100%);
-  color: #fff;
+  width: 46%;
+  height: 46%;
+  border: 5px solid #00f2fe;
   border-radius: 50%;
-  box-shadow:
-    0 4px 15px rgba(6,182,212,0.45),
-    inset 0 1px 0 rgba(255,255,255,0.2);
-  text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  box-shadow: 
+    0 0 12px #00f2fe,
+    0 0 25px rgba(0, 242, 254, 0.6),
+    inset 0 0 8px #00f2fe;
+  animation: piecePop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 @keyframes piecePop {
-  0%   { transform: scale(0) rotate(-10deg); opacity: 0; }
-  70%  { transform: scale(1.15) rotate(3deg); opacity: 1; }
+  0%   { transform: scale(0) rotate(-15deg); opacity: 0; }
+  75%  { transform: scale(1.15) rotate(5deg); opacity: 1; }
   100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
 
-/* ── WIN HIGHLIGHT ───────────────────────────────────── */
+/* ── WINNING CELL GLOW ────────────────────────────────── */
 .ttt-cell.winning-cell {
-  animation: winCellGlow 0.5s ease forwards;
+  background: rgba(251, 191, 36, 0.08);
+  border-color: rgba(251, 191, 36, 0.45);
+  box-shadow: 
+    0 0 20px rgba(251, 191, 36, 0.3),
+    inset 0 0 12px rgba(251, 191, 36, 0.1);
+  animation: winCellPulse 0.8s ease-in-out infinite alternate;
 }
 
-@keyframes winCellGlow {
-  0%   { background: rgba(255,255,255,0.03); }
-  50%  { background: rgba(252,211,77,0.2); border-color: rgba(252,211,77,0.6); }
-  100% { background: rgba(252,211,77,0.1); border-color: rgba(252,211,77,0.4); }
+@keyframes winCellPulse {
+  from { transform: scale(1); box-shadow: 0 0 15px rgba(251, 191, 36, 0.2); }
+  to   { transform: scale(1.03); box-shadow: 0 0 25px rgba(251, 191, 36, 0.45); }
 }
 
-/* ── WIN STRIKE LINE ─────────────────────────────────── */
+/* ── WIN STRIKE LINE (Laser Beam) ─────────────────────── */
 .ttt-strike-line {
   position: absolute;
   height: 6px;
@@ -334,10 +403,12 @@
   border-radius: 99px;
   z-index: 20;
   display: none;
-  box-shadow: 0 0 16px rgba(252,211,77,0.8), 0 0 32px rgba(249,115,22,0.5);
+  box-shadow: 
+    0 0 20px #fcd34d, 
+    0 0 35px #ef4444;
   transform-origin: left center;
   pointer-events: none;
-  animation: strikeFade 0.4s ease forwards;
+  animation: strikeFade 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
 @keyframes strikeFade {
@@ -347,16 +418,30 @@
 
 /* ── ACTIONS ─────────────────────────────────────────── */
 .ttt-actions {
-  padding: 8px 16px 16px;
+  padding: 12px 20px 20px;
   display: flex;
   justify-content: center;
   gap: 12px;
   flex-wrap: wrap;
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
 }
 
 .ttt-actions .btn-primary {
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  box-shadow: 0 4px 18px rgba(124, 58, 237, 0.45);
+  font-weight: 800;
+  border-radius: 99px;
+  transition: all 0.3s ease;
+}
+
+.ttt-actions .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(124, 58, 237, 0.6);
+}
+
+.ttt-actions .btn-primary:active {
+  transform: translateY(0);
 }

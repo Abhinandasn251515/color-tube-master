@@ -121,7 +121,6 @@ const TicTacToe3D = (() => {
     if (!cell) return;
     const piece = document.createElement('div');
     piece.className = `piece ${player.toLowerCase()}-piece`;
-    piece.textContent = player;
     cell.appendChild(piece);
     cell.style.pointerEvents = 'none';
   }

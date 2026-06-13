@@ -624,10 +624,15 @@
     </div>
   </div>
 
+  <!-- Status -->
+  <div class="ttt-status-wrap">
+    <div class="ttt-status" id="ttt-status-msg">Your Turn!</div>
+  </div>
+
+  <!-- Board -->
   <div class="ttt-board-container">
     <div class="ttt-board-wrapper">
       <div class="ttt-board" id="ttt-board">
-        <!-- 3x3 cells -->
         <div class="ttt-cell" data-index="0"></div>
         <div class="ttt-cell" data-index="1"></div>
         <div class="ttt-cell" data-index="2"></div>
@@ -637,16 +642,14 @@
         <div class="ttt-cell" data-index="6"></div>
         <div class="ttt-cell" data-index="7"></div>
         <div class="ttt-cell" data-index="8"></div>
-        <!-- Win Strike Line: absolutely positioned inside board, NOT a grid item -->
-        <div class="ttt-strike-line" id="ttt-strike-line"></div>
       </div>
+      <!-- Strike line is a sibling of the board, inside the wrapper -->
+      <div class="ttt-strike-line" id="ttt-strike-line"></div>
     </div>
   </div>
 
-  <div class="ttt-status" id="ttt-status-msg">Your Turn!</div>
-  
   <div class="ttt-actions">
-    <button class="btn-primary" id="ttt-reset" style="padding: 10px 24px; font-size: 0.9rem;">🔄 Reset Board</button>
+    <button class="btn-primary" id="ttt-reset" style="padding:10px 28px;font-size:0.9rem;">🔄 New Game</button>
   </div>
 </div>
 

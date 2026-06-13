@@ -16,7 +16,7 @@ const AdsManager = (() => {
   // ── Config — fill in after AdSense approval ───────────
   const CONFIG = {
     enabled:          false,               // ← set TRUE after AdSense approval
-    publisherId:      'ca-pub-XXXXXXXXXXXXXXXX', // ← your Publisher ID
+    publisherId:      'ca-pub-9764011589946758', // ← your Publisher ID
     bannerSlotMenu:   '1234567890',        // ← Menu banner ad unit ID
     bannerSlotWin:    '0987654321',        // ← Win screen banner ad unit ID
     interstitialSlot: '1122334455',        // ← Interstitial ad unit ID

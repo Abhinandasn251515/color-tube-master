@@ -49,9 +49,9 @@
 </head>
 <body class="theme-lab">
 
-<!-- Programmatic Cache Wipeout (Force upgrade to v14) -->
+<!-- Programmatic Cache Wipeout (Force upgrade to v15) -->
 <script>
-  if (!localStorage.getItem('ctm3d_wipeout_v14')) {
+  if (!localStorage.getItem('ctm3d_wipeout_v15')) {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations().then(registrations => {
         for (const registration of registrations) {
@@ -60,22 +60,22 @@
         if (window.caches) {
           caches.keys().then(keys => {
             Promise.all(keys.map(key => caches.delete(key))).then(() => {
-              localStorage.setItem('ctm3d_wipeout_v14', 'true');
+              localStorage.setItem('ctm3d_wipeout_v15', 'true');
               window.location.reload();
             });
           }).catch(() => {
-            localStorage.setItem('ctm3d_wipeout_v14', 'true');
+            localStorage.setItem('ctm3d_wipeout_v15', 'true');
             window.location.reload();
           });
         } else {
-          localStorage.setItem('ctm3d_wipeout_v14', 'true');
+          localStorage.setItem('ctm3d_wipeout_v15', 'true');
           window.location.reload();
         }
       }).catch(() => {
-        localStorage.setItem('ctm3d_wipeout_v14', 'true');
+        localStorage.setItem('ctm3d_wipeout_v15', 'true');
       });
     } else {
-      localStorage.setItem('ctm3d_wipeout_v14', 'true');
+      localStorage.setItem('ctm3d_wipeout_v15', 'true');
     }
   }
 </script>
@@ -555,6 +555,9 @@
       <button class="btn-secondary" id="win-menu">🏠 Menu</button>
       <button class="btn-primary"   id="win-next">Next ▶</button>
     </div>
+    <button class="btn-secondary" id="win-share" style="width: 100%; margin-top: 10px; text-align: center; justify-content: center; display: flex; align-items: center; gap: 8px; font-weight: 800; border-radius: var(--r-lg);">
+      📢 Brag & Share Score
+    </button>
     <!-- Win screen banner ad -->
     <div class="ad-banner-wrap ad-banner-win" id="ad-win-banner"></div>
   </div>
@@ -625,9 +628,12 @@
   <div class="screen-header">
     <button class="btn-back" id="lb-back">←</button>
     <div class="screen-title">🌍 Leaderboard</div>
-    <div class="lb-live-badge" id="lb-live-badge">
+    <div class="lb-live-badge" id="lb-live-badge" style="margin-left: auto;">
       <span class="online-dot"></span> LIVE
     </div>
+    <button class="btn-share-lb" id="btn-share-lb" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:white;font-size:0.75rem;cursor:pointer;padding:6px 12px;border-radius:20px;font-weight:bold;display:flex;align-items:center;gap:6px;font-family:'Outfit',sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);transition:background 0.2s;">
+      📢 Share
+    </button>
   </div>
   <div class="lb-tabs">
     <button class="lb-tab active" data-lb="global">🌐 Global</button>

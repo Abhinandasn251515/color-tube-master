@@ -7,6 +7,7 @@ const UI = (() => {
   let currentScreen = 'splash';
   let adCallback    = null;
   let adTimerInt    = null;
+  let lastWinData   = null;
 
   // ── Screen Navigation ──────────────────────────────────
   function showScreen(id, animate = true) {
@@ -165,6 +166,7 @@ const UI = (() => {
 
   // ── Win Handler ───────────────────────────────────────
   function handleWin({ stars, moves, timeSec, usedHint, usedUndo, levelData }) {
+    lastWinData = { levelData, moves, timeSec };
     const diff = levelData.difficulty || 'beginner';
 
     // Process progression
@@ -616,6 +618,59 @@ const UI = (() => {
     });
     document.getElementById('btn-share-hero')?.addEventListener('click', () => {
       document.getElementById('btn-share')?.click();
+    });
+
+    // Win Screen Share button
+    document.getElementById('win-share')?.addEventListener('click', () => {
+      Audio.click();
+      if (!lastWinData) return;
+
+      const { levelData, moves, timeSec } = lastWinData;
+      let text = '';
+      if (levelData.isDaily) {
+        text = `📅 I solved today's Daily Challenge in Color Tube Master 3D in ${moves} moves! Can you beat my score?`;
+      } else if (levelData.isInfinite) {
+        text = `🧪 I cleared a level in Infinite Mode in Color Tube Master 3D! Can you beat my score?`;
+      } else {
+        text = `🧪 I cleared Level ${levelData.id} (${levelData.difficulty}) in Color Tube Master 3D in ${moves} moves! Can you beat my score?`;
+      }
+
+      const shareData = {
+        title: 'Color Tube Master 3D 🧪',
+        text: text,
+        url: 'https://color-tube-master.web.app'
+      };
+
+      if (navigator.share) {
+        navigator.share(shareData).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(`${text} Play free at: https://color-tube-master.web.app`)
+          .then(() => showToast('🔗 Score copied to clipboard! Share it!'))
+          .catch(() => showToast('Failed to copy to clipboard'));
+      }
+    });
+
+    // Leaderboard Share button
+    document.getElementById('btn-share-lb')?.addEventListener('click', () => {
+      Audio.click();
+      const save = Storage.data();
+      const xp = save.xp || 0;
+      const rank = save.rank || 'Beginner';
+      const text = `🏆 I'm playing Color Tube Master 3D! I've achieved the rank "${rank}" with ${xp} XP! Can you beat my rank?`;
+
+      const shareData = {
+        title: 'Color Tube Master 3D 🧪',
+        text: text,
+        url: 'https://color-tube-master.web.app'
+      };
+
+      if (navigator.share) {
+        navigator.share(shareData).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(`${text} Play free at: https://color-tube-master.web.app`)
+          .then(() => showToast('🔗 Rank copied to clipboard! Share it!'))
+          .catch(() => showToast('Failed to copy to clipboard'));
+      }
     });
 
     // Floating donate FAB + menu tile

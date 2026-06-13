@@ -3,8 +3,8 @@
    Color Tube Master 3D
 ═══════════════════════════════════════════════════════════ */
 
-const CACHE_NAME   = 'ctm3d-v6';
-const STATIC_CACHE = 'ctm3d-static-v6';
+const CACHE_NAME   = 'ctm3d-v7';
+const STATIC_CACHE = 'ctm3d-static-v7';
 
 // Files to cache for full offline play
 const PRECACHE_URLS = [
@@ -17,6 +17,7 @@ const PRECACHE_URLS = [
   '/css/themes.css',
   '/css/auth.css',
   '/css/ads.css',
+  '/css/ttt.css',
   '/js/firebase-config.js',
   '/js/utils.js',
   '/js/storage.js',
@@ -31,6 +32,7 @@ const PRECACHE_URLS = [
   '/js/leaderboard-service.js',
   '/js/auth-ui.js',
   '/js/ads.js',
+  '/js/ttt.js',
   '/js/ui.js',
   '/js/main.js',
   '/icons/icon-192.png',

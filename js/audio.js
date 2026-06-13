@@ -257,12 +257,33 @@ const Audio = (() => {
     else if (!on) stopMusic();
   }
 
+  /** Game over / Lose! Descending sad chord */
+  function lose() {
+    playSfx((c, g) => {
+      const notes = [293.66, 261.63, 220.00, 196.00]; // D4, C4, A3, G3 (sad tone)
+      notes.forEach((freq, i) => {
+        const osc = c.createOscillator();
+        const gain = c.createGain();
+        const t = c.currentTime + i * 0.15;
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq, t);
+        osc.frequency.linearRampToValueAtTime(freq * 0.8, t + 0.4);
+        gain.gain.setValueAtTime(0, t);
+        gain.gain.linearRampToValueAtTime(0.12, t + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
+        osc.connect(gain); gain.connect(g);
+        osc.start(t); osc.stop(t + 0.65);
+      });
+    });
+  }
+
   function resume() {
     const c = getCtx();
     if (c && c.state === 'suspended') c.resume();
   }
 
-  return { pour, tap, invalid, win, collect, click, achievement, undo, startMusic, stopMusic, setSfxEnabled, setMusicEnabled, resume };
+  return { pour, tap, invalid, win, lose, collect, click, achievement, undo, startMusic, stopMusic, setSfxEnabled, setMusicEnabled, resume };
 })();
 
 window.Audio = Audio;
+

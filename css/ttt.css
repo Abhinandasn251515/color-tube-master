@@ -129,6 +129,7 @@
 .ttt-board-wrapper {
   width: 280px;
   height: 280px;
+  position: relative;
   transform-style: preserve-3d;
   transition: transform 0.8s ease-in-out;
 }
@@ -150,6 +151,7 @@
     -10px 10px 0 rgba(124, 58, 237, 0.15),
     -20px 20px 24px rgba(0, 0, 0, 0.55),
     inset 0 0 20px rgba(124, 58, 237, 0.2);
+  position: relative;
 }
 
 /* ── BOARD CELLS ────────────────────────────────── */
@@ -222,9 +224,9 @@
 /* ── WIN STRIKE LINE ────────────────────────────── */
 .ttt-strike-line {
   position: absolute;
+  height: 6px;
   background: linear-gradient(90deg, #fcd34d, #f97316);
   border-radius: 99px;
-  transform: translateZ(22px);
   z-index: 10;
   display: none; /* Controlled by JS */
   box-shadow: 0 0 20px #fcd34d, 0 0 40px #f97316;

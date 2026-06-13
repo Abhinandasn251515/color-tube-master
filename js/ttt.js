@@ -40,7 +40,17 @@ const TicTacToe3D = (() => {
   function setupEventListeners() {
     const cells = document.querySelectorAll('.ttt-cell');
     cells.forEach(cell => {
-      cell.addEventListener('click', () => handleCellClick(parseInt(cell.dataset.index)));
+      // Use touchstart + click for max compatibility (mobile & desktop)
+      let touchHandled = false;
+      cell.addEventListener('touchstart', (e) => {
+        e.stopPropagation();
+        touchHandled = true;
+        handleCellClick(parseInt(cell.dataset.index));
+      }, { passive: true });
+      cell.addEventListener('click', () => {
+        if (touchHandled) { touchHandled = false; return; } // Prevent double-fire on touch
+        handleCellClick(parseInt(cell.dataset.index));
+      });
     });
 
     document.getElementById('ttt-reset')?.addEventListener('click', () => {

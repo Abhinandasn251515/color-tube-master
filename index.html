@@ -273,6 +273,20 @@
       <div class="lr-left">🎁 Daily reward ready!</div>
       <button class="lr-claim" id="lr-claim-btn">Claim</button>
     </div>
+
+    <!-- DONATE BANNER — always visible -->
+    <div class="donate-hero-bar">
+      <a href="https://rzp.io/rzp/6YZDwu7K" target="_blank" class="donate-hero-btn donate-hero-india">
+        🇮🇳 Pay with UPI
+      </a>
+      <a href="https://buymeacoffee.com/colortubemaster" target="_blank" class="donate-hero-btn donate-hero-coffee">
+        ☕ Buy Coffee
+      </a>
+      <button class="donate-hero-btn donate-hero-share" id="btn-share-hero">
+        📤 Share
+      </button>
+    </div>
+
   </div>
 
   <div class="menu-main">
@@ -288,15 +302,41 @@
       <button class="menu-tile" id="btn-leaderboard"><div class="tile-icon">🌍</div><div class="tile-label">Leader-<br/>board</div></button>
       <button class="menu-tile" id="btn-settings"><div class="tile-icon">⚙️</div><div class="tile-label">Settings</div></button>
       <button class="menu-tile" id="btn-infinite"><div class="tile-icon">♾️</div><div class="tile-label">Infinite<br/>Mode</div></button>
+      <button class="menu-tile menu-tile-support" id="btn-donate"><div class="tile-icon">💰</div><div class="tile-label">Support<br/>Dev</div></button>
+      <button class="menu-tile" id="btn-share"><div class="tile-icon">📤</div><div class="tile-label">Share<br/>Game</div></button>
     </div>
   </div>
 
   <!-- Share + Support Bar -->
   <div class="support-bar">
     <button class="btn-share" id="btn-share">📤 Share Game</button>
+    <a href="https://rzp.io/rzp/6YZDwu7K" target="_blank" class="btn-razorpay">💳 Support (India)</a>
     <a href="https://buymeacoffee.com/colortubemaster" target="_blank" class="btn-coffee">☕ Support Dev</a>
   </div>
 
+</div>
+
+<!-- ════════ FLOATING DONATE BUTTON (always visible) ════════ -->
+<div id="donate-fab" class="donate-fab">💰</div>
+<div id="donate-panel" class="donate-panel" style="display:none;">
+  <div class="donate-panel-title">❤️ Support the Developer</div>
+  <a href="https://rzp.io/rzp/6YZDwu7K" target="_blank" class="donate-option donate-india">
+    <span class="donate-icon">🇮🇳</span>
+    <div>
+      <div class="donate-label">Pay with UPI / Card</div>
+      <div class="donate-sub">GPay · PhonePe · Paytm · Cards</div>
+    </div>
+    <span class="donate-arrow">→</span>
+  </a>
+  <a href="https://buymeacoffee.com/colortubemaster" target="_blank" class="donate-option donate-global">
+    <span class="donate-icon">☕</span>
+    <div>
+      <div class="donate-label">Buy Me a Coffee</div>
+      <div class="donate-sub">PayPal · Card (International)</div>
+    </div>
+    <span class="donate-arrow">→</span>
+  </a>
+  <button class="donate-close" id="donate-close">✕ Close</button>
 </div>
 
 <!-- ════════ LEVEL SELECT ════════ -->
@@ -558,10 +598,36 @@
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/sw.js')
-        .then(reg => console.log('[SW] Registered:', reg.scope))
+        .then(reg => {
+          console.log('[SW] Registered:', reg.scope);
+          // Detect service worker updates and auto-reload the page
+          reg.addEventListener('updatefound', () => {
+            const newWorker = reg.installing;
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'activated') {
+                console.log('[SW] New version activated, reloading...');
+                window.location.reload();
+              }
+            });
+          });
+        })
         .catch(err => console.warn('[SW] Registration failed:', err));
     });
   }
+</script>
+
+<!-- ════════ BUY ME A COFFEE WIDGET ════════ -->
+<script
+  data-name="BMC-Widget"
+  data-cfasync="false"
+  src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
+  data-id="colortubemaster"
+  data-description="Support me on Buy me a coffee!"
+  data-message="Enjoying Color Tube Master 3D? Buy me a coffee and help me build more levels! ☕🧪"
+  data-color="#7c3aed"
+  data-position="Right"
+  data-x_margin="18"
+  data-y_margin="80">
 </script>
 
 </body>

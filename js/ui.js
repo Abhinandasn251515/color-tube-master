@@ -609,6 +609,24 @@ const UI = (() => {
           .catch(() => showToast('Share: color-tube-master.web.app'));
       }
     });
+    document.getElementById('btn-share-hero')?.addEventListener('click', () => {
+      document.getElementById('btn-share')?.click();
+    });
+
+    // Floating donate FAB + menu tile
+    const donateFab   = document.getElementById('donate-fab');
+    const donatePanel = document.getElementById('donate-panel');
+    const donateClose = document.getElementById('donate-close');
+    const openDonatePanel = () => {
+      Audio.click();
+      donatePanel.style.display = donatePanel.style.display === 'none' ? 'flex' : 'none';
+    };
+    donateFab?.addEventListener('click', openDonatePanel);
+    document.getElementById('btn-donate')?.addEventListener('click', openDonatePanel);
+    donateClose?.addEventListener('click', () => {
+      Audio.click();
+      donatePanel.style.display = 'none';
+    });
 
     // Level select
     document.getElementById('levels-back')?.addEventListener('click', () => { Audio.click(); showScreen('menu'); });

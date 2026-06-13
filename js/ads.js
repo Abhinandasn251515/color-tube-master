@@ -17,7 +17,7 @@ const AdsManager = (() => {
   const CONFIG = {
     enabled:          false,               // ← set TRUE after AdSense approval
     publisherId:      'ca-pub-9764011589946758', // ← your Publisher ID
-    bannerSlotMenu:   '1234567890',        // ← Menu banner ad unit ID
+    bannerSlotMenu:   '3739665539',        // ← Menu banner ad unit ID
     bannerSlotWin:    '0987654321',        // ← Win screen banner ad unit ID
     interstitialSlot: '1122334455',        // ← Interstitial ad unit ID
     rewardedSlot:     '5544332211',        // ← Rewarded ad unit ID
@@ -57,11 +57,33 @@ const AdsManager = (() => {
 
   // ── Real AdSense Banner Init ──────────────────────────
   function _initBanners() {
-    document.querySelectorAll('.adsense-unit').forEach(ins => {
+    // 1. Setup Menu Banner
+    const menuBannerWrap = document.getElementById('ad-menu-banner');
+    if (menuBannerWrap) {
+      menuBannerWrap.innerHTML = `
+        <ins class="adsbygoogle adsense-unit"
+             style="display:inline-block;width:320px;height:50px"
+             data-ad-client="${CONFIG.publisherId}"
+             data-ad-slot="${CONFIG.bannerSlotMenu}"></ins>
+      `;
       try {
         (window.adsbygoogle = window.adsbygoogle || []).push({});
       } catch(e) {}
-    });
+    }
+
+    // 2. Setup Win Screen Banner
+    const winBannerWrap = document.getElementById('ad-win-banner');
+    if (winBannerWrap) {
+      winBannerWrap.innerHTML = `
+        <ins class="adsbygoogle adsense-unit"
+             style="display:inline-block;width:300px;height:250px"
+             data-ad-client="${CONFIG.publisherId}"
+             data-ad-slot="${CONFIG.bannerSlotWin}"></ins>
+      `;
+      try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      } catch(e) {}
+    }
   }
 
   // ── Demo Banners (shown before AdSense approval) ──────

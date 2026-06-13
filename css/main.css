@@ -1661,3 +1661,113 @@ input  { font-family: inherit; }
   .menu-hero { padding-top: 36px; }
   .btn-play  { height: 80px; font-size: 2rem; }
 }
+
+/* ── 3D Arcade Selection Grid ────────────────────────── */
+.arcade-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 440px;
+  padding: 16px;
+  z-index: 5;
+}
+
+.arcade-card {
+  display: flex;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  overflow: hidden;
+  backdrop-filter: blur(15px);
+  transition: transform 0.3s var(--tr-spring), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.arcade-card.active-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: rgba(124, 58, 237, 0.4);
+  box-shadow: 0 12px 30px rgba(124, 58, 237, 0.25);
+}
+
+.arcade-card-visual {
+  width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.ctm-bg {
+  background: linear-gradient(135deg, rgba(124,58,237,0.3), rgba(236,72,153,0.3));
+}
+
+.ttt-bg {
+  background: linear-gradient(135deg, rgba(239,68,68,0.3), rgba(245,158,11,0.3));
+}
+
+.locked-bg {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.arcade-card-icon {
+  font-size: 2.2rem;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+  transition: transform 0.3s var(--tr-spring);
+}
+
+.arcade-card:hover .arcade-card-icon {
+  transform: scale(1.15) rotate(5deg);
+}
+
+.arcade-card-info {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.arcade-card-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.arcade-card-desc {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.3;
+}
+
+.btn-arcade-play {
+  align-self: flex-start;
+  margin-top: 6px;
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  color: #fff;
+  border-radius: var(--r-full);
+  padding: 6px 20px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.btn-arcade-play:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+.locked-card {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.locked-card .arcade-card-title {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.locked-card .arcade-card-desc {
+  color: rgba(255, 255, 255, 0.35);
+}

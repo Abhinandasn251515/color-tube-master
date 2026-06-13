@@ -24,6 +24,7 @@ const UI = (() => {
     if (id === 'shop')   refreshShop('themes');
     if (id === 'leaderboard') refreshLeaderboard('global');
     if (id === 'daily')  refreshDaily();
+    if (id === 'ttt')    TicTacToe3D.resetBoard();
   }
 
   // ── Menu Refresh ──────────────────────────────────────
@@ -589,7 +590,11 @@ const UI = (() => {
     document.getElementById('btn-shop')?.addEventListener('click', () => { Audio.click(); showScreen('shop'); });
     document.getElementById('btn-leaderboard')?.addEventListener('click', () => { Audio.click(); showScreen('leaderboard'); });
     document.getElementById('btn-settings')?.addEventListener('click', () => { Audio.click(); showScreen('settings'); });
-    document.getElementById('btn-infinite')?.addEventListener('click', () => { Audio.click(); startInfiniteMode(); });
+    document.getElementById('btn-arcade')?.addEventListener('click', () => { Audio.click(); showScreen('arcade'); });
+    document.getElementById('arcade-back')?.addEventListener('click', () => { Audio.click(); showScreen('menu'); });
+    document.getElementById('btn-play-infinite')?.addEventListener('click', () => { Audio.click(); startInfiniteMode(); });
+    document.getElementById('btn-play-ttt')?.addEventListener('click', () => { Audio.click(); showScreen('ttt'); });
+    document.getElementById('ttt-back')?.addEventListener('click', () => { Audio.click(); showScreen('arcade'); });
     document.getElementById('lr-claim-btn')?.addEventListener('click', () => { Audio.click(); showScreen('daily'); });
 
     // Share button

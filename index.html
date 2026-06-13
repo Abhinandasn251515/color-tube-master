@@ -42,6 +42,7 @@
   <link rel="stylesheet" href="css/themes.css"/>
   <link rel="stylesheet" href="css/auth.css"/>
   <link rel="stylesheet" href="css/ads.css"/>
+  <link rel="stylesheet" href="css/ttt.css"/>
   <!-- Google AdSense Verification -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9764011589946758"
      crossorigin="anonymous"></script>
@@ -304,7 +305,7 @@
       <button class="menu-tile" id="btn-shop"><div class="tile-icon">🛍️</div><div class="tile-label">Shop</div></button>
       <button class="menu-tile" id="btn-leaderboard"><div class="tile-icon">🌍</div><div class="tile-label">Leader-<br/>board</div></button>
       <button class="menu-tile" id="btn-settings"><div class="tile-icon">⚙️</div><div class="tile-label">Settings</div></button>
-      <button class="menu-tile" id="btn-infinite"><div class="tile-icon">♾️</div><div class="tile-label">Infinite<br/>Mode</div></button>
+      <button class="menu-tile" id="btn-arcade"><div class="tile-icon">🎮</div><div class="tile-label">3D<br/>Arcade</div></button>
       <button class="menu-tile menu-tile-support" id="btn-donate"><div class="tile-icon">💰</div><div class="tile-label">Support<br/>Dev</div></button>
       <button class="menu-tile" id="btn-share"><div class="tile-icon">📤</div><div class="tile-label">Share<br/>Game</div></button>
     </div>
@@ -530,6 +531,126 @@
   </div>
 </div>
 
+<!-- ════════ 3D ARCADE HUB ════════ -->
+<div class="screen" id="screen-arcade">
+  <div class="screen-header">
+    <button class="btn-back" id="arcade-back">←</button>
+    <div class="screen-title">🎮 3D Arcade</div>
+  </div>
+  <div class="arcade-grid">
+    <!-- Game 1: Color Sort Infinite -->
+    <div class="arcade-card active-card" id="arcade-card-infinite">
+      <div class="arcade-card-visual ctm-bg">
+        <div class="arcade-card-icon">🧪</div>
+      </div>
+      <div class="arcade-card-info">
+        <div class="arcade-card-title">Color Sort (Infinite)</div>
+        <div class="arcade-card-desc">Endless color sorting fun.</div>
+        <button class="btn-arcade-play" id="btn-play-infinite">Play Mode</button>
+      </div>
+    </div>
+    
+    <!-- Game 2: Tic-Tac-Toe 3D -->
+    <div class="arcade-card active-card" id="arcade-card-ttt">
+      <div class="arcade-card-visual ttt-bg">
+        <div class="arcade-card-icon">❌</div>
+      </div>
+      <div class="arcade-card-info">
+        <div class="arcade-card-title">Tic-Tac-Toe 3D</div>
+        <div class="arcade-card-desc">Isometric grid vs Smart AI.</div>
+        <button class="btn-arcade-play" id="btn-play-ttt">Play Game</button>
+      </div>
+    </div>
+
+    <!-- Game 3: Block Stack 3D (Locked) -->
+    <div class="arcade-card locked-card">
+      <div class="arcade-card-visual locked-bg">
+        <div class="arcade-card-icon">🔒</div>
+      </div>
+      <div class="arcade-card-info">
+        <div class="arcade-card-title">Block Stack 3D</div>
+        <div class="arcade-card-desc">Coming soon in next update!</div>
+      </div>
+    </div>
+
+    <!-- Game 4: Unblock Me 3D (Locked) -->
+    <div class="arcade-card locked-card">
+      <div class="arcade-card-visual locked-bg">
+        <div class="arcade-card-icon">🔒</div>
+      </div>
+      <div class="arcade-card-info">
+        <div class="arcade-card-title">Unblock Me 3D</div>
+        <div class="arcade-card-desc">Coming soon in next update!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ TIC-TAC-TOE 3D ════════ -->
+<div class="screen" id="screen-ttt">
+  <div class="screen-header">
+    <button class="btn-back" id="ttt-back">←</button>
+    <div class="screen-title">❌ Tic-Tac-Toe 3D ⭕</div>
+  </div>
+  
+  <div class="ttt-hud">
+    <div class="ttt-players">
+      <div class="ttt-player active" id="ttt-p1-card">
+        <span class="ttt-badge p1-badge">X</span>
+        <span class="ttt-name">You</span>
+        <span class="ttt-score" id="ttt-score-p1">0</span>
+      </div>
+      <div class="ttt-vs">VS</div>
+      <div class="ttt-player" id="ttt-p2-card">
+        <span class="ttt-score" id="ttt-score-p2">0</span>
+        <span class="ttt-name" id="ttt-p2-name">CPU</span>
+        <span class="ttt-badge p2-badge">O</span>
+      </div>
+    </div>
+
+    <div class="ttt-controls-bar">
+      <!-- Mode select -->
+      <div class="ttt-toggle-group">
+        <button class="ttt-toggle-btn active" id="ttt-mode-cpu">VS CPU</button>
+        <button class="ttt-toggle-btn" id="ttt-mode-2p">Local 2P</button>
+      </div>
+      
+      <!-- Difficulty select -->
+      <div class="ttt-toggle-group" id="ttt-diff-group">
+        <button class="ttt-toggle-btn" data-diff="easy">Easy</button>
+        <button class="ttt-toggle-btn active" data-diff="medium">Medium</button>
+        <button class="ttt-toggle-btn" data-diff="hard">Unbeatable</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ttt-board-container">
+    <div class="ttt-board-wrapper">
+      <div class="ttt-board" id="ttt-board">
+        <!-- 3x3 cells -->
+        <div class="ttt-cell" data-index="0"></div>
+        <div class="ttt-cell" data-index="1"></div>
+        <div class="ttt-cell" data-index="2"></div>
+        <div class="ttt-cell" data-index="3"></div>
+        <div class="ttt-cell" data-index="4"></div>
+        <div class="ttt-cell" data-index="5"></div>
+        <div class="ttt-cell" data-index="6"></div>
+        <div class="ttt-cell" data-index="7"></div>
+        <div class="ttt-cell" data-index="8"></div>
+        
+        <!-- Win Strike Line Overlay -->
+        <div class="ttt-strike-line" id="ttt-strike-line"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ttt-status" id="ttt-status-msg">Your Turn!</div>
+  
+  <div class="ttt-actions">
+    <button class="btn-primary" id="ttt-reset" style="padding: 10px 24px; font-size: 0.9rem;">🔄 Reset Board</button>
+  </div>
+</div>
+
 <!-- ════════ MODALS ════════ -->
 <div class="modal-overlay" id="modal-pause" style="display:none">
   <div class="modal-card">
@@ -593,6 +714,7 @@
 <script src="js/leaderboard-service.js"></script>
 <script src="js/auth-ui.js"></script>
 <script src="js/ads.js"></script>
+<script src="js/ttt.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/main.js"></script>
 

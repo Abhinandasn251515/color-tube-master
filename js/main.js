@@ -20,6 +20,7 @@
     // 4. Bind all UI events
     UI.bindEvents();
     UI.initSettings();
+    TicTacToe3D.init();
 
     // 5. Bind auth UI events
     AuthUI.bindEvents();

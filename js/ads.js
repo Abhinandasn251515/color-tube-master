@@ -18,7 +18,7 @@ const AdsManager = (() => {
     enabled:          false,               // ← set TRUE after AdSense approval
     publisherId:      'ca-pub-9764011589946758', // ← your Publisher ID
     bannerSlotMenu:   '3739665539',        // ← Menu banner ad unit ID
-    bannerSlotWin:    '0987654321',        // ← Win screen banner ad unit ID
+    bannerSlotWin:    '7487338857',        // ← Win screen banner ad unit ID
     interstitialSlot: '1122334455',        // ← Interstitial ad unit ID
     rewardedSlot:     '5544332211',        // ← Rewarded ad unit ID
   };
@@ -76,9 +76,11 @@ const AdsManager = (() => {
     if (winBannerWrap) {
       winBannerWrap.innerHTML = `
         <ins class="adsbygoogle adsense-unit"
-             style="display:inline-block;width:300px;height:250px"
+             style="display:block"
              data-ad-client="${CONFIG.publisherId}"
-             data-ad-slot="${CONFIG.bannerSlotWin}"></ins>
+             data-ad-slot="${CONFIG.bannerSlotWin}"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
       `;
       try {
         (window.adsbygoogle = window.adsbygoogle || []).push({});

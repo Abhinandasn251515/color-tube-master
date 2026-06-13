@@ -49,26 +49,102 @@
 </head>
 <body class="theme-lab">
 
-<!-- Global Error Debugger -->
+<!-- Global Error Debugger & Console Logger -->
 <script>
-  window.addEventListener('error', (e) => {
-    const errorMsg = `Error: ${e.message} at ${e.filename || 'unknown'}:${e.lineno || 0}`;
-    console.error(errorMsg);
-    const div = document.createElement('div');
-    div.id = 'debug-error-banner';
-    div.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#ef4444;color:white;padding:12px;z-index:999999;font-size:13px;font-family:sans-serif;font-weight:bold;word-break:break-all;box-shadow:0 4px 12px rgba(0,0,0,0.3);text-align:center;';
-    div.innerHTML = `⚠️ ${errorMsg} <button onclick="this.parentElement.remove()" style="margin-left:15px;background:rgba(255,255,255,0.25);border:none;color:white;padding:2px 8px;border-radius:4px;cursor:pointer;font-weight:bold;">Dismiss</button>`;
-    document.body.appendChild(div);
-  });
-  window.addEventListener('unhandledrejection', (e) => {
-    const errorMsg = `Promise Error: ${e.reason}`;
-    console.error(errorMsg);
-    const div = document.createElement('div');
-    div.id = 'debug-promise-banner';
-    div.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#ef4444;color:white;padding:12px;z-index:999999;font-size:13px;font-family:sans-serif;font-weight:bold;word-break:break-all;box-shadow:0 4px 12px rgba(0,0,0,0.3);text-align:center;';
-    div.innerHTML = `⚠️ ${errorMsg} <button onclick="this.parentElement.remove()" style="margin-left:15px;background:rgba(255,255,255,0.25);border:none;color:white;padding:2px 8px;border-radius:4px;cursor:pointer;font-weight:bold;">Dismiss</button>`;
-    document.body.appendChild(div);
-  });
+  (function() {
+    const logs = [];
+    
+    function logToConsole(type, ...args) {
+      const msg = args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : String(arg)).join(' ');
+      logs.push({ type, msg, time: new Date().toLocaleTimeString() });
+      updateUI();
+    }
+
+    // Capture standard console logs
+    const originalLog = console.log;
+    const originalWarn = console.warn;
+    const originalError = console.error;
+
+    console.log = function(...args) { originalLog.apply(console, args); logToConsole('log', ...args); };
+    console.warn = function(...args) { originalWarn.apply(console, args); logToConsole('warn', ...args); };
+    console.error = function(...args) { originalError.apply(console, args); logToConsole('error', ...args); };
+
+    window.addEventListener('error', (e) => {
+      const errorMsg = `Error: ${e.message} at ${e.filename || 'unknown'}:${e.lineno || 0}`;
+      logToConsole('crash', errorMsg);
+    });
+
+    window.addEventListener('unhandledrejection', (e) => {
+      const errorMsg = `Promise Error: ${e.reason}`;
+      logToConsole('crash', errorMsg);
+    });
+
+    let panel = null;
+    let button = null;
+
+    function createUI() {
+      if (document.getElementById('dbg-console-btn')) return;
+
+      // Small floating button in bottom-left corner
+      button = document.createElement('button');
+      button.id = 'dbg-console-btn';
+      button.textContent = '🛠️ Console Logs';
+      button.style.cssText = 'position:fixed;bottom:15px;left:15px;z-index:999999;background:#1e1b4b;border:1px solid rgba(255,255,255,0.25);color:white;padding:8px 12px;border-radius:20px;font-size:11px;font-weight:bold;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,0.4);font-family:sans-serif;letter-spacing:0.02em;';
+      button.onclick = togglePanel;
+      document.body.appendChild(button);
+
+      // Panel overlay
+      panel = document.createElement('div');
+      panel.style.cssText = 'position:fixed;inset:0;background:rgba(15,12,41,0.98);z-index:999998;display:none;flex-direction:column;font-family:monospace;color:#fff;padding:15px;box-sizing:border-box;font-size:11px;';
+      
+      const header = document.createElement('div');
+      header.style.cssText = 'display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:8px;margin-bottom:8px;flex-shrink:0;';
+      header.innerHTML = '<span style="font-weight:bold;font-size:13px;color:#7c3aed;">🧪 Remote Debug Console</span>' + 
+                         '<div style="display:flex;gap:10px;">' +
+                         '<button id="dbg-clear-btn" style="background:#ef4444;color:white;border:none;padding:3px 8px;border-radius:4px;cursor:pointer;font-weight:bold;font-size:10px;">Clear</button>' +
+                         '<button id="dbg-close-btn" style="background:#4b5563;color:white;border:none;padding:3px 8px;border-radius:4px;cursor:pointer;font-weight:bold;font-size:10px;">Close</button>' +
+                         '</div>';
+      
+      const content = document.createElement('div');
+      content.id = 'dbg-content';
+      content.style.cssText = 'flex:1;overflow-y:auto;word-break:break-all;white-space:pre-wrap;line-height:1.4;';
+
+      panel.appendChild(header);
+      panel.appendChild(content);
+      document.body.appendChild(panel);
+
+      panel.querySelector('#dbg-close-btn').onclick = togglePanel;
+      panel.querySelector('#dbg-clear-btn').onclick = () => { logs.length = 0; updateUI(); };
+    }
+
+    function togglePanel() {
+      if (!panel) createUI();
+      if (panel.style.display === 'none') {
+        panel.style.display = 'flex';
+        updateUI();
+      } else {
+        panel.style.display = 'none';
+      }
+    }
+
+    function updateUI() {
+      if (!panel) return;
+      const content = panel.querySelector('#dbg-content');
+      if (!content) return;
+      content.innerHTML = logs.map(l => {
+        let color = '#a78bfa'; // default log
+        if (l.type === 'warn') color = '#fbbf24';
+        if (l.type === 'error' || l.type === 'crash') color = '#f87171';
+        return `<div style="border-bottom:1px solid rgba(255,255,255,0.04);padding:4px 0;color:${color}">[${l.time}] [${l.type.toUpperCase()}] ${l.msg}</div>`;
+      }).join('');
+      content.scrollTop = content.scrollHeight;
+    }
+
+    window.addEventListener('load', () => {
+      createUI();
+      updateUI();
+    });
+  })();
 </script>
 
 <!-- ════════ BACKGROUND ════════ -->

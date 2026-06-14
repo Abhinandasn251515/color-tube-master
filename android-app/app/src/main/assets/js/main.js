@@ -120,6 +120,18 @@
     if (customParam) {
       const customLevel = UI.parseCustomLevel(customParam);
       if (customLevel) {
+        const recordMoves = parseInt(urlParams.get('recordMoves'), 10);
+        const recordTime = parseInt(urlParams.get('recordTime'), 10);
+        const creator = urlParams.get('creator');
+        
+        if (!isNaN(recordMoves) && !isNaN(recordTime)) {
+          customLevel.challenge = {
+            recordMoves,
+            recordTime,
+            creator: creator || 'Friend'
+          };
+        }
+
         UI.startCustomLevel(customLevel);
         AuthUI.updateMenuAuthBadge(!!user, user);
         return;

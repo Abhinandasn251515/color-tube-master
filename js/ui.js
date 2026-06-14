@@ -16,6 +16,7 @@ const UI = (() => {
     [],
     []
   ];
+  let activeChallenge = null;
 
   const EMOJI_MAP = {
     red: '🔴', blue: '🔵', green: '🟢', yellow: '🟡',
@@ -180,6 +181,10 @@ const UI = (() => {
     const levelData = Levels.getById(levelId);
     if (!levelData) return;
 
+    activeChallenge = null;
+    const chalHud = document.getElementById('challenge-hud');
+    if (chalHud) chalHud.style.display = 'none';
+
     showScreen('game');
     Animations.stopConfetti();
 
@@ -190,6 +195,10 @@ const UI = (() => {
   }
 
   function startDailyChallenge() {
+    activeChallenge = null;
+    const chalHud = document.getElementById('challenge-hud');
+    if (chalHud) chalHud.style.display = 'none';
+
     const dailyLevel = Levels.getDailyChallenge();
     showScreen('game');
     Game.onWin(handleWin);
@@ -198,6 +207,10 @@ const UI = (() => {
   }
 
   function startInfiniteMode() {
+    activeChallenge = null;
+    const chalHud = document.getElementById('challenge-hud');
+    if (chalHud) chalHud.style.display = 'none';
+
     const seed  = Date.now();
     const level = Levels.generateLevel(seed, 'medium');
     level.isInfinite = true;
@@ -211,6 +224,27 @@ const UI = (() => {
   // ── Win Handler ───────────────────────────────────────
   function handleWin({ stars, moves, timeSec, usedHint, usedUndo, levelData }) {
     lastWinData = { levelData, moves, timeSec };
+
+    // Hide active challenge HUD banner on win screen
+    const chalHud = document.getElementById('challenge-hud');
+    if (chalHud) chalHud.style.display = 'none';
+
+    // Verify speedrun challenge results
+    const statusEl = document.getElementById('win-challenge-status');
+    if (statusEl) {
+      if (activeChallenge) {
+        const beaten = moves < activeChallenge.recordMoves || (moves === activeChallenge.recordMoves && timeSec < activeChallenge.recordTime);
+        lastWinData.challenge = activeChallenge;
+        lastWinData.challengeBeaten = beaten;
+
+        statusEl.className = 'win-challenge-status ' + (beaten ? 'challenge-beaten' : 'challenge-missed');
+        statusEl.textContent = beaten ? '🔥 Challenge Beaten!' : `❌ Beat: ${activeChallenge.recordMoves} Moves`;
+        statusEl.style.display = 'inline-block';
+      } else {
+        statusEl.style.display = 'none';
+      }
+    }
+
     const diff = levelData.difficulty || 'beginner';
 
     // Process progression
@@ -786,6 +820,19 @@ const UI = (() => {
     Game.onWin(handleWin);
     Game.loadLevel(levelData);
     Audio.startMusic();
+
+    const chalHud = document.getElementById('challenge-hud');
+    const chalText = document.getElementById('challenge-text');
+    if (levelData.challenge) {
+      activeChallenge = levelData.challenge;
+      if (chalHud && chalText) {
+        chalText.textContent = `Beat ${activeChallenge.creator}'s record: ${activeChallenge.recordMoves} Moves | ${Utils.formatTime(activeChallenge.recordTime)}`;
+        chalHud.style.display = 'flex';
+      }
+    } else {
+      activeChallenge = null;
+      if (chalHud) chalHud.style.display = 'none';
+    }
   }
 
   function compileEmojiPuzzle(tubes) {
@@ -941,57 +988,134 @@ const UI = (() => {
       ctx.fillStyle = lineGrad;
       ctx.fillRect(150, 140, 500, 2);
 
-      ctx.fillStyle = '#10b981';
-      ctx.font = "900 48px 'Fredoka One', sans-serif";
-      ctx.fillText("LEVEL CLEAR!", 400, 210);
+      const isChallenge = lastWinData && lastWinData.challenge;
+      const challengeBeaten = lastWinData && lastWinData.challengeBeaten;
 
-      ctx.fillStyle = '#f59e0b';
-      ctx.font = "40px sans-serif";
-      const starText = '⭐'.repeat(starsCount) + '☆'.repeat(3 - starsCount);
-      ctx.fillText(starText, 400, 260);
+      if (isChallenge) {
+        ctx.fillStyle = challengeBeaten ? '#fbbf24' : '#ffffff';
+        ctx.font = "900 44px 'Fredoka One', sans-serif";
+        ctx.fillText(challengeBeaten ? "CHALLENGE BEATEN!" : "CHALLENGE PLAYED", 400, 210);
 
-      ctx.save();
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
-      ctx.lineWidth = 1.5;
-      roundRect(100, 300, 280, 200, 16);
-      ctx.fill();
-      ctx.stroke();
-      ctx.restore();
+        ctx.fillStyle = '#f59e0b';
+        ctx.font = "40px sans-serif";
+        const starText = '⭐'.repeat(starsCount) + '☆'.repeat(3 - starsCount);
+        ctx.fillText(starText, 400, 265);
 
-      ctx.textAlign = 'left';
-      ctx.fillStyle = '#94a3b8';
-      ctx.font = "14px 'Outfit', sans-serif";
-      
-      let levelNameText = `Level ${levelData.id}`;
-      if (levelData.isDaily) levelNameText = "Daily Challenge";
-      if (levelData.isInfinite) levelNameText = "Infinite Mode";
+        ctx.save();
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.02)';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+        ctx.lineWidth = 1.5;
+        roundRect(75, 300, 280, 200, 16);
+        ctx.fill();
+        ctx.stroke();
 
-      ctx.fillText("LEVEL", 130, 345);
-      ctx.fillStyle = '#ffffff';
-      ctx.font = "bold 20px 'Outfit', sans-serif";
-      ctx.fillText(levelNameText, 130, 370);
+        roundRect(445, 300, 280, 200, 16);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
 
-      ctx.fillStyle = '#94a3b8';
-      ctx.font = "14px 'Outfit', sans-serif";
-      ctx.fillText("MOVES TAKEN", 130, 420);
-      ctx.fillStyle = '#38bdf8';
-      ctx.font = "bold 20px 'Outfit', sans-serif";
-      ctx.fillText(`${moves} Moves`, 130, 445);
+        const chal = lastWinData.challenge;
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = "14px 'Outfit', sans-serif";
+        ctx.fillText("CREATOR", 105, 345);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = "bold 20px 'Outfit', sans-serif";
+        ctx.fillText(chal.creator, 105, 370);
 
-      ctx.fillStyle = '#94a3b8';
-      ctx.font = "14px 'Outfit', sans-serif";
-      ctx.fillText("TIME SPENT", 130, 495);
-      ctx.fillStyle = '#2dd4bf';
-      ctx.font = "bold 20px 'Outfit', sans-serif";
-      ctx.fillText(Utils.formatTime(timeSec), 130, 520);
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = "14px 'Outfit', sans-serif";
+        ctx.fillText("RECORD TO BEAT", 105, 420);
+        ctx.fillStyle = '#ef4444';
+        ctx.font = "bold 20px 'Outfit', sans-serif";
+        ctx.fillText(`${chal.recordMoves} Moves`, 105, 445);
+        ctx.font = "16px 'Outfit', sans-serif";
+        ctx.fillText(Utils.formatTime(chal.recordTime), 105, 475);
 
-      const colors1 = ['red', 'blue', 'green', 'yellow'];
-      const colors2 = ['green', 'yellow', 'red', 'blue'];
-      const colors3 = [];
-      drawCanvasTube(ctx, 450, 320, 45, 140, colors1);
-      drawCanvasTube(ctx, 520, 320, 45, 140, colors2);
-      drawCanvasTube(ctx, 590, 320, 45, 140, colors3);
+        ctx.fillText("YOU", 475, 345);
+        ctx.fillStyle = challengeBeaten ? '#fbbf24' : '#ffffff';
+        ctx.font = "bold 20px 'Outfit', sans-serif";
+        ctx.fillText(Storage.get('playerName') || 'You', 475, 370);
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = "14px 'Outfit', sans-serif";
+        ctx.fillText("YOUR SCORE", 475, 420);
+        ctx.fillStyle = '#10b981';
+        ctx.font = "bold 20px 'Outfit', sans-serif";
+        ctx.fillText(`${moves} Moves`, 475, 445);
+        ctx.font = "16px 'Outfit', sans-serif";
+        ctx.fillText(Utils.formatTime(timeSec), 475, 475);
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(400, 400, 30, 0, Math.PI * 2);
+        ctx.fillStyle = '#1e1b4b';
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 2;
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#fbbf24';
+        ctx.font = "bold 18px 'Outfit', sans-serif";
+        ctx.textAlign = 'center';
+        ctx.fillText("VS", 400, 406);
+        ctx.restore();
+
+        drawCanvasTube(ctx, 375, 470, 25, 70, ['red', 'blue']);
+        drawCanvasTube(ctx, 405, 470, 25, 70, ['blue', 'red']);
+      } else {
+        ctx.fillStyle = levelData.isDaily ? '#ec4899' : '#10b981';
+        ctx.font = "900 48px 'Fredoka One', sans-serif";
+        ctx.fillText(levelData.isDaily ? "DAILY CLEAR!" : "LEVEL CLEAR!", 400, 210);
+
+        ctx.fillStyle = '#f59e0b';
+        ctx.font = "40px sans-serif";
+        const starText = '⭐'.repeat(starsCount) + '☆'.repeat(3 - starsCount);
+        ctx.fillText(starText, 400, 260);
+
+        ctx.save();
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+        ctx.lineWidth = 1.5;
+        roundRect(100, 300, 280, 200, 16);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = "14px 'Outfit', sans-serif";
+        
+        let levelNameText = `Level ${levelData.id}`;
+        if (levelData.isDaily) levelNameText = "Daily Challenge";
+        if (levelData.isInfinite) levelNameText = "Infinite Mode";
+
+        ctx.fillText("LEVEL", 130, 345);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = "bold 20px 'Outfit', sans-serif";
+        ctx.fillText(levelNameText, 130, 370);
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = "14px 'Outfit', sans-serif";
+        ctx.fillText("MOVES TAKEN", 130, 420);
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = "bold 20px 'Outfit', sans-serif";
+        ctx.fillText(`${moves} Moves`, 130, 445);
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = "14px 'Outfit', sans-serif";
+        ctx.fillText("TIME SPENT", 130, 495);
+        ctx.fillStyle = '#2dd4bf';
+        ctx.font = "bold 20px 'Outfit', sans-serif";
+        ctx.fillText(Utils.formatTime(timeSec), 130, 520);
+
+        const colors1 = ['red', 'blue', 'green', 'yellow'];
+        const colors2 = ['green', 'yellow', 'red', 'blue'];
+        const colors3 = [];
+        drawCanvasTube(ctx, 450, 320, 45, 140, colors1);
+        drawCanvasTube(ctx, 520, 320, 45, 140, colors2);
+        drawCanvasTube(ctx, 590, 320, 45, 140, colors3);
+      }
 
       const logoImg = new Image();
       logoImg.src = 'icons/icon-192.png';
@@ -1093,24 +1217,45 @@ const UI = (() => {
 
       const { levelData, moves, timeSec } = lastWinData;
       let text = '';
-      if (levelData.isDaily) {
-        text = `📅 I solved today's Daily Challenge in Color Tube Master 3D in ${moves} moves! Can you beat my score?`;
+      let shareUrl = window.location.origin + window.location.pathname;
+      const emojiPuzzle = compileEmojiPuzzle(levelData.tubes);
+      const creatorName = encodeURIComponent(Storage.get('playerName') || 'Friend');
+
+      if (levelData.isCustom) {
+        const code = serializeCustomLevel(levelData.tubes);
+        
+        if (lastWinData.challenge) {
+          const chal = lastWinData.challenge;
+          shareUrl = `${shareUrl}?custom=${code}&recordMoves=${chal.recordMoves}&recordTime=${chal.recordTime}&creator=${encodeURIComponent(chal.creator)}`;
+          if (lastWinData.challengeBeaten) {
+            text = `🔥 I BEAT ${chal.creator}'s Speedrun Challenge in Color Tube Master 3D! I solved it in ${moves} moves (their record: ${chal.recordMoves} moves). Can you do better?\n\n${emojiPuzzle}\nPlay challenge:`;
+          } else {
+            text = `🧪 I played ${chal.creator}'s Speedrun Challenge in Color Tube Master 3D! My score: ${moves} moves (target: ${chal.recordMoves}). Can you beat it?\n\n${emojiPuzzle}\nPlay challenge:`;
+          }
+        } else {
+          shareUrl = `${shareUrl}?custom=${code}&recordMoves=${moves}&recordTime=${timeSec}&creator=${creatorName}`;
+          text = `🧪 I cleared my Custom Level in Color Tube Master 3D in ${moves} moves! Can you beat my Speedrun Challenge? 🏆\n\n${emojiPuzzle}\nPlay challenge:`;
+        }
+      } else if (levelData.isDaily) {
+        shareUrl = `${shareUrl}?daily=true`;
+        text = `📅 I solved today's Daily Challenge in Color Tube Master 3D in ${moves} moves! Can you beat my score? 🏆\n\n${emojiPuzzle}\nPlay daily challenge:`;
       } else if (levelData.isInfinite) {
-        text = `🧪 I cleared a level in Infinite Mode in Color Tube Master 3D! Can you beat my score?`;
+        text = `🧪 I cleared an Infinite Mode level in Color Tube Master 3D in ${moves} moves!\n\n${emojiPuzzle}\nPlay here:`;
       } else {
-        text = `🧪 I cleared Level ${levelData.id} (${levelData.difficulty}) in Color Tube Master 3D in ${moves} moves! Can you beat my score?`;
+        shareUrl = `${shareUrl}?level=${levelData.id}`;
+        text = `🧪 I cleared Level ${levelData.id} (${levelData.difficulty}) in Color Tube Master 3D in ${moves} moves! Can you beat my score? 🏆\n\n${emojiPuzzle}\nPlay here:`;
       }
 
       const shareData = {
         title: 'Color Tube Master 3D 🧪',
         text: text,
-        url: 'https://color-tube-master.web.app'
+        url: shareUrl
       };
 
       if (navigator.share) {
         navigator.share(shareData).catch(() => {});
       } else {
-        showQRShareModal(levelData.id || 1);
+        showQRShareModal(shareUrl);
       }
     });
 

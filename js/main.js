@@ -21,8 +21,16 @@
     UI.bindEvents();
     UI.initSettings();
     TicTacToe3D.init();
-    MotionManager.init();
-    DuelsManager.init();
+    if (typeof MotionManager !== 'undefined') {
+      MotionManager.init();
+    } else {
+      console.warn('[Main] MotionManager is not defined.');
+    }
+    if (typeof DuelsManager !== 'undefined') {
+      DuelsManager.init();
+    } else {
+      console.warn('[Main] DuelsManager is not defined.');
+    }
 
     // 5. Bind auth UI events
     AuthUI.bindEvents();

@@ -30,7 +30,7 @@ const UI = (() => {
     if (id === 'leaderboard') refreshLeaderboard('global');
     if (id === 'daily')  refreshDaily();
     if (id === 'ttt')    TicTacToe3D.resetBoard();
-    if (id === 'duels') {
+    if (id === 'duels' && typeof DuelsManager !== 'undefined') {
       const select = document.getElementById('duel-level-select');
       if (select) {
         DuelsManager.loadChallengers(parseInt(select.value));

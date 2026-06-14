@@ -23,7 +23,7 @@ const MotionManager = (() => {
     isEnabled = Storage.get('motionControlsEnabled') === 'true';
     toggle.checked = isEnabled;
 
-    toggle.addEventListener('change', async () => {
+    toggle.addEventListener('click', async () => {
       isEnabled = toggle.checked;
       if (isEnabled) {
         const granted = await requestPermissions();
@@ -52,8 +52,12 @@ const MotionManager = (() => {
     // iOS 13+ requires explicit permission request
     if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
       try {
-        const orient = await DeviceOrientationEvent.requestPermission();
-        const motion = await DeviceMotionEvent.requestPermission();
+        const orientPromise = DeviceOrientationEvent.requestPermission();
+        const motionPromise = typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function'
+          ? DeviceMotionEvent.requestPermission()
+          : Promise.resolve('granted');
+
+        const [orient, motion] = await Promise.all([orientPromise, motionPromise]);
         return orient === 'granted' && motion === 'granted';
       } catch (err) {
         console.error('[Motion] Permission error:', err);
@@ -164,7 +168,7 @@ const MotionManager = (() => {
 
   function isGameActive() {
     const screenGame = document.getElementById('screen-game');
-    return screenGame && screenGame.style.display !== 'none' && !screenGame.classList.contains('hidden');
+    return screenGame && screenGame.classList.contains('active');
   }
 
   return { init };

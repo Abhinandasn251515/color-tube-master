@@ -194,7 +194,7 @@ const Renderer = (() => {
     });
   }
 
-  return { init, renderTubes, updateTube, selectTube, clearSelection, hintTube, shakeTube, markDone, markAllDone, getTubeEl, getTubeOuter, animatePour, setTubeSize };
+  return { init, renderTubes, updateTube, selectTube, clearSelection, hintTube, shakeTube, markDone, markAllDone, getTubeEl, getTubeOuter, animatePour, setTubeSize, buildTubeHTML };
 })();
 
 window.Renderer = Renderer;

@@ -228,3 +228,183 @@
 .screen {
   will-change: opacity, transform;
 }
+
+
+/* ── Ghost Duels Matchmaking & Gameplay Styles ── */
+
+.duels-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  height: calc(100% - 70px);
+  overflow-y: auto;
+}
+
+.duels-level-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 12px 18px;
+  border-radius: 16px;
+}
+
+.duels-level-row label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.duels-select {
+  background: rgba(13, 13, 43, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 10px;
+  outline: none;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+}
+
+.duels-list-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  min-height: 200px;
+}
+
+.duels-section-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #00ffcc;
+  text-shadow: 0 0 8px rgba(0, 255, 204, 0.3);
+}
+
+.duels-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.duel-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 12px 18px;
+  transition: background 0.3s ease;
+}
+
+.duel-list-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.duel-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.duel-player-name {
+  font-weight: bold;
+  font-size: 0.95rem;
+  color: #fff;
+}
+
+.duel-player-stats {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.btn-duel-challenge {
+  background: linear-gradient(135deg, #06b6d4, #3b82f6);
+  border: none;
+  color: #fff;
+  border-radius: 999px;
+  padding: 8px 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-duel-challenge:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.4);
+}
+
+.duels-loading {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+  padding: 40px;
+  font-size: 0.9rem;
+}
+
+/* ── Split Screen active ── */
+.game-area.duel-active {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .game-area.duel-active {
+    flex-direction: column;
+    justify-content: center;
+    gap: 15px;
+  }
+  .duel-board .tubes-container {
+    transform: scale(0.85);
+    transform-origin: center top;
+    margin-bottom: -15px;
+  }
+}
+
+.duel-board {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.board-label {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #00ffcc;
+  text-shadow: 0 0 5px rgba(0, 255, 204, 0.4);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+#ghost-board-wrapper .board-label {
+  color: #ff0077;
+  text-shadow: 0 0 5px rgba(255, 0, 119, 0.4);
+}
+
+/* ── Ghost Pour Visual Animation ── */
+.ghost-pouring {
+  transform: translateY(-15px) rotate(35deg) scale(1.05);
+  z-index: 10;
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.ghost-receiving {
+  box-shadow: 0 0 15px rgba(255, 0, 119, 0.6);
+  transition: box-shadow 0.3s ease;
+}
+
+.duels-bg {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.35), rgba(59, 130, 246, 0.35));
+}

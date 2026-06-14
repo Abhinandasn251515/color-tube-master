@@ -49,9 +49,9 @@
 </head>
 <body class="theme-lab">
 
-<!-- Programmatic Cache Wipeout (Force upgrade to v18) -->
+<!-- Programmatic Cache Wipeout (Force upgrade to v19) -->
 <script>
-  if (!localStorage.getItem('ctm3d_wipeout_v18')) {
+  if (!localStorage.getItem('ctm3d_wipeout_v19')) {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations().then(registrations => {
         for (const registration of registrations) {
@@ -60,22 +60,22 @@
         if (window.caches) {
           caches.keys().then(keys => {
             Promise.all(keys.map(key => caches.delete(key))).then(() => {
-              localStorage.setItem('ctm3d_wipeout_v18', 'true');
+              localStorage.setItem('ctm3d_wipeout_v19', 'true');
               window.location.reload();
             });
           }).catch(() => {
-            localStorage.setItem('ctm3d_wipeout_v18', 'true');
+            localStorage.setItem('ctm3d_wipeout_v19', 'true');
             window.location.reload();
           });
         } else {
-          localStorage.setItem('ctm3d_wipeout_v18', 'true');
+          localStorage.setItem('ctm3d_wipeout_v19', 'true');
           window.location.reload();
         }
       }).catch(() => {
-        localStorage.setItem('ctm3d_wipeout_v18', 'true');
+        localStorage.setItem('ctm3d_wipeout_v19', 'true');
       });
     } else {
-      localStorage.setItem('ctm3d_wipeout_v18', 'true');
+      localStorage.setItem('ctm3d_wipeout_v19', 'true');
     }
   }
 </script>
@@ -521,7 +521,14 @@
   </div>
 
   <div class="game-area" id="game-area">
-    <div class="tubes-container" id="tubes-container"></div>
+    <div class="board-wrapper" id="main-board-wrapper">
+      <div class="board-label" id="main-board-label" style="display: none;">You</div>
+      <div class="tubes-container" id="tubes-container"></div>
+    </div>
+    <div class="board-wrapper" id="ghost-board-wrapper" style="display: none;">
+      <div class="board-label" id="ghost-board-label">Ghost</div>
+      <div class="tubes-container" id="ghost-tubes-container"></div>
+    </div>
     <canvas id="pour-canvas"></canvas>
   </div>
 
@@ -710,14 +717,15 @@
       </div>
     </div>
 
-    <!-- Game 3: Block Stack 3D (Locked) -->
-    <div class="arcade-card locked-card">
-      <div class="arcade-card-visual locked-bg">
-        <div class="arcade-card-icon">🔒</div>
+    <!-- Game 3: Asynchronous Ghost Duels -->
+    <div class="arcade-card active-card" id="arcade-card-duels">
+      <div class="arcade-card-visual duels-bg">
+        <div class="arcade-card-icon">👻</div>
       </div>
       <div class="arcade-card-info">
-        <div class="arcade-card-title">Block Stack 3D</div>
-        <div class="arcade-card-desc">Coming soon in next update!</div>
+        <div class="arcade-card-title">Ghost Duels</div>
+        <div class="arcade-card-desc">Race against other players' best runs!</div>
+        <button class="btn-arcade-play" id="btn-play-duels">Find Match</button>
       </div>
     </div>
 
@@ -729,6 +737,37 @@
       <div class="arcade-card-info">
         <div class="arcade-card-title">Unblock Me 3D</div>
         <div class="arcade-card-desc">Coming soon in next update!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ GHOST DUELS MATCHMAKING ════════ -->
+<div class="screen" id="screen-duels">
+  <div class="screen-header">
+    <button class="btn-back" id="duels-back">←</button>
+    <div class="screen-title">👻 Ghost Duels</div>
+  </div>
+  <div class="duels-panel">
+    <div class="duels-level-row">
+      <label for="duel-level-select">Select Level:</label>
+      <select id="duel-level-select" class="duels-select">
+        <option value="1">Level 1 (Beginner)</option>
+        <option value="2">Level 2 (Beginner)</option>
+        <option value="3">Level 3 (Easy)</option>
+        <option value="4">Level 4 (Easy)</option>
+        <option value="5">Level 5 (Medium)</option>
+        <option value="6">Level 6 (Medium)</option>
+        <option value="7">Level 7 (Hard)</option>
+        <option value="8">Level 8 (Hard)</option>
+        <option value="9">Level 9 (Expert)</option>
+        <option value="10">Level 10 (Expert)</option>
+      </select>
+    </div>
+    <div class="duels-list-section">
+      <div class="duels-section-title">Challengers</div>
+      <div class="duels-list" id="duels-list">
+        <!-- Injected dynamically -->
       </div>
     </div>
   </div>
@@ -867,6 +906,7 @@
 <script src="js/ttt.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/motion.js"></script>
+<script src="js/duels.js"></script>
 <script src="js/main.js"></script>
 
 <!-- Service Worker Registration -->

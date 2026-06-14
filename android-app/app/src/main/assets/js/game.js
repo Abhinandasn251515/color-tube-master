@@ -26,6 +26,8 @@ const Game = (() => {
 
   let onWinCallback  = null;
   let onMoveCallback = null;
+  let onPourCallback = null;
+  let onUndoCallback = null;
 
   // ── Load a Level ──────────────────────────────────────
   function loadLevel(levelData) {
@@ -156,6 +158,10 @@ const Game = (() => {
     Solver.pour(state.tubes, fromIdx, toIdx, filters);
     state.moves++;
 
+    if (onPourCallback) {
+      onPourCallback(fromIdx, toIdx);
+    }
+
     // Visual: animate pour
     Renderer.clearSelection();
     await Renderer.animatePour(fromIdx, toIdx, fromColor);
@@ -197,6 +203,10 @@ const Game = (() => {
     state.phase    = 'IDLE';
     state.usedUndo = true;
     state.moves    = Math.max(0, state.moves - 1);
+
+    if (onUndoCallback) {
+      onUndoCallback();
+    }
 
     const filters = state.levelData ? state.levelData.filters : [];
     Renderer.renderTubes(state.tubes, state.tubeSize, filters);
@@ -362,12 +372,14 @@ const Game = (() => {
   // ── Callbacks ─────────────────────────────────────────
   function onWin(cb)  { onWinCallback  = cb; }
   function onMove(cb) { onMoveCallback = cb; }
+  function onPour(cb) { onPourCallback = cb; }
+  function onUndo(cb) { onUndoCallback = cb; }
 
   return {
     loadLevel, undo, getHint, addHint, restart, autoSolve,
     handleTubeClick, updateHUD, updateHintBadge,
     getState, getTubes, getMoves, getTime, isWon, isPaused,
-    pause, resume, onWin, onMove
+    pause, resume, onWin, onMove, onPour, onUndo
   };
 })();
 

@@ -22,6 +22,7 @@
     UI.initSettings();
     TicTacToe3D.init();
     MotionManager.init();
+    DuelsManager.init();
 
     // 5. Bind auth UI events
     AuthUI.bindEvents();

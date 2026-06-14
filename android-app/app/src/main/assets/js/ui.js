@@ -11,6 +11,10 @@ const UI = (() => {
 
   // ── Screen Navigation ──────────────────────────────────
   function showScreen(id, animate = true) {
+    if (id !== 'game' && typeof DuelsManager !== 'undefined') {
+      DuelsManager.stopDuel();
+    }
+
     const prev = document.querySelector('.screen.active');
     const next = document.getElementById(`screen-${id}`);
     if (!next) return;
@@ -26,6 +30,12 @@ const UI = (() => {
     if (id === 'leaderboard') refreshLeaderboard('global');
     if (id === 'daily')  refreshDaily();
     if (id === 'ttt')    TicTacToe3D.resetBoard();
+    if (id === 'duels') {
+      const select = document.getElementById('duel-level-select');
+      if (select) {
+        DuelsManager.loadChallengers(parseInt(select.value));
+      }
+    }
   }
 
   // ── Menu Refresh ──────────────────────────────────────

@@ -4,8 +4,13 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <meta name="theme-color" content="#7c3aed"/>
-  <meta name="description" content="Color Tube Master 3D — Sort colorful liquids into test tubes! 100 levels, real-time global leaderboard, daily challenges. Play free!"/>
-  <title>Color Tube Master 3D</title>
+  <title>Color Tube Master 3D — Free Liquid Sort Puzzle Game</title>
+  <meta name="description" content="Play Color Tube Master 3D free online! Sort colorful liquids into matching test tubes. 100+ levels, daily challenges, global leaderboard, speedrun mode &amp; multiplayer duels. No download needed!"/>
+  <meta name="keywords" content="color tube master, liquid sort puzzle, water sort game, tube sorting game, free puzzle game online, brain puzzle game, color sort, test tube game, liquid sort 3D, water sort puzzle"/>
+  <meta name="author" content="Abhinandan S N"/>
+  <meta name="robots" content="index, follow"/>
+  <meta name="googlebot" content="index, follow"/>
+  <link rel="canonical" href="https://color-tube-master.web.app/"/>
 
   <!-- PWA / App Store -->
   <link rel="manifest" href="/manifest.json"/>
@@ -16,13 +21,22 @@
   <meta name="application-name" content="Color Tube Master 3D"/>
   <meta name="msapplication-TileColor" content="#7c3aed"/>
 
-  <!-- Open Graph (for sharing) -->
-  <meta property="og:title" content="Color Tube Master 3D"/>
-  <meta property="og:description" content="Sort colorful liquids into tubes! 100 levels, live leaderboard. Play free!"/>
+  <!-- Open Graph (Facebook, WhatsApp, Discord) -->
+  <meta property="og:title" content="Color Tube Master 3D — Free Liquid Sort Puzzle Game"/>
+  <meta property="og:description" content="Sort colorful liquids into matching test tubes! 100+ levels, daily challenges, live leaderboard &amp; speedrun mode. Play free — no download!"/>
   <meta property="og:type" content="website"/>
-  <meta property="og:url" content="https://color-tube-master.web.app"/>
+  <meta property="og:url" content="https://color-tube-master.web.app/"/>
   <meta property="og:image" content="https://color-tube-master.web.app/icons/splash.png"/>
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+  <meta property="og:site_name" content="Color Tube Master 3D"/>
+  <meta property="og:locale" content="en_US"/>
+
+  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="Color Tube Master 3D — Free Liquid Sort Puzzle Game"/>
+  <meta name="twitter:description" content="Sort colorful liquids into matching test tubes! Play free online. 100+ levels, daily challenges &amp; leaderboard."/>
+  <meta name="twitter:image" content="https://color-tube-master.web.app/icons/splash.png"/>
 
   <!-- Apple Touch Icons -->
   <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152.png"/>
@@ -30,19 +44,42 @@
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png"/>
   <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png"/>
 
+  <!-- JSON-LD Structured Data (tells Google this is a game) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoGame",
+    "name": "Color Tube Master 3D",
+    "description": "Sort colorful liquids into matching test tubes! A free online puzzle game with 100+ levels, daily challenges, global leaderboard, speedrun mode and multiplayer duels.",
+    "url": "https://color-tube-master.web.app/",
+    "image": "https://color-tube-master.web.app/icons/splash.png",
+    "author": {
+      "@type": "Person",
+      "name": "Abhinandan S N",
+      "url": "https://github.com/Abhinandasn251515"
+    },
+    "publisher": { "@type": "Person", "name": "Abhinandan S N" },
+    "genre": ["Puzzle", "Brain Game", "Casual"],
+    "playMode": "SinglePlayer",
+    "applicationCategory": "Game",
+    "operatingSystem": "Web Browser, Android",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+
   <!-- Firebase SDK (compat) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <!-- Styles -->
-  <link rel="stylesheet" href="css/main.css?v=19"/>
-  <link rel="stylesheet" href="css/tubes.css?v=19"/>
-  <link rel="stylesheet" href="css/ui.css?v=19"/>
-  <link rel="stylesheet" href="css/themes.css?v=19"/>
-  <link rel="stylesheet" href="css/auth.css?v=19"/>
-  <link rel="stylesheet" href="css/ads.css?v=19"/>
-  <link rel="stylesheet" href="css/ttt.css?v=19"/>
+  <link rel="stylesheet" href="css/main.css?v=20"/>
+  <link rel="stylesheet" href="css/tubes.css?v=20"/>
+  <link rel="stylesheet" href="css/ui.css?v=20"/>
+  <link rel="stylesheet" href="css/themes.css?v=20"/>
+  <link rel="stylesheet" href="css/auth.css?v=20"/>
+  <link rel="stylesheet" href="css/ads.css?v=20"/>
+  <link rel="stylesheet" href="css/ttt.css?v=20"/>
   <!-- Google AdSense Verification -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9764011589946758"
      crossorigin="anonymous"></script>

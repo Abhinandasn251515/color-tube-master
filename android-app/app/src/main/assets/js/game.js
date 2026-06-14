@@ -359,6 +359,60 @@ const Game = (() => {
     if (badge) badge.textContent = Storage.get('hintsRemaining') || 0;
   }
 
+  // ── Power-Ups ──────────────────────────────────────────
+  function usePowerUp(type) {
+    const costs = { undo: 5, hint: 10, bomb: 25, solve: 50 };
+    const cost = costs[type];
+    const coins = Storage.get('coins') || 0;
+
+    if (coins < cost) {
+      UI.showToast(`Need ${cost}🪙 coins! You have ${coins}🪙`);
+      return;
+    }
+
+    Storage.addCoins(-cost);
+
+    if (type === 'undo') {
+      undo();
+      UI.showToast('↩️ Undo used!');
+    } else if (type === 'hint') {
+      const hinted = getHint();
+      if (hinted) {
+        UI.showToast('💡 Hint activated!');
+      } else {
+        // refund if no hint was possible
+        Storage.addCoins(cost);
+        UI.showToast('💡 No hint available right now.');
+      }
+    } else if (type === 'bomb') {
+      // Find most common color and clear from all tubes
+      const colorCounts = {};
+      state.tubes.forEach(t => t.forEach(c => { colorCounts[c] = (colorCounts[c] || 0) + 1; }));
+      const dominant = Object.entries(colorCounts).sort((a, b) => b[1] - a[1])[0];
+      if (dominant) {
+        state.history.push(Utils.cloneState(state.tubes));
+        state.tubes.forEach(t => {
+          for (let i = t.length - 1; i >= 0; i--) {
+            if (t[i] === dominant[0]) t.splice(i, 1);
+          }
+        });
+        const filters = state.levelData ? state.levelData.filters : [];
+        Renderer.renderTubes(state.tubes, state.tubeSize, filters);
+        setupTubeListeners();
+        UI.showToast(`💣 Bombed all ${dominant[0]} liquid!`);
+        if (Solver.isWon(state.tubes)) handleWin();
+      } else {
+        Storage.addCoins(cost);
+        UI.showToast('💣 Nothing to bomb!');
+      }
+    } else if (type === 'solve') {
+      state.usedHint = true;
+      autoSolve();
+      UI.showToast('🤖 Auto-solving...');
+    }
+    updateHUD();
+  }
+
   // ── Getters ──────────────────────────────────────────
   function getState() { return state; }
   function getTubes()  { return state.tubes; }
@@ -377,7 +431,7 @@ const Game = (() => {
   function onUndo(cb) { onUndoCallback = cb; }
 
   return {
-    loadLevel, undo, getHint, addHint, restart, autoSolve,
+    loadLevel, undo, getHint, addHint, restart, autoSolve, usePowerUp,
     handleTubeClick, updateHUD, updateHintBadge,
     getState, getTubes, getMoves, getTime, isWon, isPaused,
     pause, resume, onWin, onMove, onPour, onUndo

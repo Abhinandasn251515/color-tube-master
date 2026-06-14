@@ -31,6 +31,9 @@
     } else {
       console.warn('[Main] DuelsManager is not defined.');
     }
+    if (typeof Addictive !== 'undefined') {
+      Addictive.init();
+    }
 
     // 5. Bind auth UI events
     AuthUI.bindEvents();

@@ -429,6 +429,14 @@
       <div class="xp-bar"><div class="xp-fill" id="xp-fill"></div></div>
       <div class="xp-label" id="xp-label">0 XP</div>
     </div>
+    <div class="streak-row">
+      <div class="streak-badge" id="streak-badge">
+        <span id="streak-fire">🔥</span>
+        <span id="streak-count">0</span>
+        <span class="streak-text">day streak</span>
+      </div>
+      <button class="spin-mini-btn" id="btn-spin-mini">🎡 Spin!</button>
+    </div>
   </div>
 
   <div class="menu-hero">
@@ -472,6 +480,14 @@
         <div class="tile-badge" id="daily-badge">NEW</div>
       </button>
       <button class="menu-tile" id="btn-achievements"><div class="tile-icon">🏆</div><div class="tile-label">Achieve-<br/>ments</div></button>
+      <button class="menu-tile" id="btn-time-attack">
+        <div class="tile-icon">⏱️</div><div class="tile-label">Time<br/>Attack</div>
+        <div class="tile-badge" style="background:linear-gradient(135deg,#ef4444,#f97316);">HOT</div>
+      </button>
+      <button class="menu-tile" id="btn-spin-wheel">
+        <div class="tile-icon">🎡</div><div class="tile-label">Spin<br/>Wheel</div>
+        <div class="tile-badge" id="spin-badge" style="background:linear-gradient(135deg,#10b981,#06b6d4);">FREE</div>
+      </button>
       <button class="menu-tile" id="btn-shop"><div class="tile-icon">🛍️</div><div class="tile-label">Shop</div></button>
       <button class="menu-tile" id="btn-leaderboard"><div class="tile-icon">🌍</div><div class="tile-label">Leader-<br/>board</div></button>
       <button class="menu-tile" id="btn-settings"><div class="tile-icon">⚙️</div><div class="tile-label">Settings</div></button>
@@ -559,6 +575,22 @@
       <button class="btn-hud btn-hud-yellow"  id="btn-hint"  title="Hint">💡</button>
       <div class="hint-badge" id="hint-badge">3</div>
     </div>
+  </div>
+
+  <!-- Power-Up Bar -->
+  <div class="powerup-bar" id="powerup-bar">
+    <button class="powerup-btn" id="pu-undo" onclick="Game.usePowerUp('undo')" title="Undo (5 coins)">
+      <span class="pu-icon">↩️</span><span class="pu-label">Undo</span><span class="pu-cost">5🪙</span>
+    </button>
+    <button class="powerup-btn" id="pu-hint" onclick="Game.usePowerUp('hint')" title="Hint (10 coins)">
+      <span class="pu-icon">💡</span><span class="pu-label">Hint</span><span class="pu-cost">10🪙</span>
+    </button>
+    <button class="powerup-btn" id="pu-bomb" onclick="Game.usePowerUp('bomb')" title="Color Bomb (25 coins)">
+      <span class="pu-icon">💣</span><span class="pu-label">Bomb</span><span class="pu-cost">25🪙</span>
+    </button>
+    <button class="powerup-btn" id="pu-solve" onclick="Game.usePowerUp('solve')" title="Auto-Solve (50 coins)">
+      <span class="pu-icon">🤖</span><span class="pu-label">Solve</span><span class="pu-cost">50🪙</span>
+    </button>
   </div>
 
   <!-- Target Challenge Banner -->
@@ -1103,30 +1135,70 @@
   </div>
 </div>
 
+<!-- ════════ SPIN WHEEL MODAL ════════ -->
+<div class="modal-overlay" id="modal-spin-wheel" style="display:none">
+  <div class="modal-card spin-wheel-modal">
+    <div class="spin-modal-title">🎡 Daily Spin Wheel</div>
+    <div class="spin-modal-sub" id="spin-status-text">Spin once a day for free prizes!</div>
+    <div class="spin-wheel-wrap">
+      <div class="spin-pointer">▼</div>
+      <canvas id="spin-canvas" width="280" height="280"></canvas>
+    </div>
+    <button class="spin-btn" id="btn-do-spin">🎡 SPIN!</button>
+    <div class="spin-result" id="spin-result" style="display:none"></div>
+    <button class="btn-ghost" id="btn-spin-close" style="margin-top:10px;width:100%;text-align:center;padding:10px;">Close</button>
+  </div>
+</div>
+
+<!-- ════════ TIME ATTACK MODAL ════════ -->
+<div class="modal-overlay" id="modal-time-attack" style="display:none">
+  <div class="modal-card" style="text-align:center;max-width:340px;">
+    <div style="font-size:2.5rem;margin-bottom:8px;">⏱️</div>
+    <h3 style="margin:0 0 8px;color:#fff;">Time Attack Mode</h3>
+    <p style="font-size:0.82rem;color:rgba(255,255,255,0.65);margin-bottom:16px;line-height:1.5;">
+      Race the clock! Every second costs you coins. Solve faster to earn bigger rewards!
+    </p>
+    <div class="ta-difficulty-row">
+      <button class="ta-diff-btn active" data-sec="120">⚡ 2 min</button>
+      <button class="ta-diff-btn" data-sec="90">🔥 90 sec</button>
+      <button class="ta-diff-btn" data-sec="60">💀 60 sec</button>
+    </div>
+    <div class="ta-rewards-preview">
+      <div class="ta-reward-item"><span>🥇 Beat clock</span><span>+100 🪙</span></div>
+      <div class="ta-reward-item"><span>⭐ 3 Stars</span><span>+50 🪙</span></div>
+      <div class="ta-reward-item"><span>⚡ Speed Bonus</span><span>+25 XP</span></div>
+    </div>
+    <button class="btn-primary ta-start-btn" id="btn-ta-start" style="width:100%;margin-top:12px;justify-content:center;">▶ Start Time Attack!</button>
+    <button class="btn-ghost" id="btn-ta-close" style="width:100%;margin-top:8px;text-align:center;padding:10px;">Cancel</button>
+  </div>
+</div>
+
 <div class="achievement-toast" id="achievement-toast" style="display:none">
   <div class="at-icon" id="at-icon">🏆</div>
   <div><div class="at-title">Achievement Unlocked!</div><div class="at-name" id="at-name"></div></div>
 </div>
 
+
 <!-- ════════ SCRIPTS ════════ -->
-<script src="js/firebase-config.js?v=19"></script>
-<script src="js/utils.js?v=19"></script>
-<script src="js/storage.js?v=19"></script>
-<script src="js/levels.js?v=19"></script>
-<script src="js/solver.js?v=19"></script>
-<script src="js/audio.js?v=19"></script>
-<script src="js/progression.js?v=19"></script>
-<script src="js/animations.js?v=19"></script>
-<script src="js/renderer.js?v=19"></script>
-<script src="js/game.js?v=19"></script>
-<script src="js/auth.js?v=19"></script>
-<script src="js/leaderboard-service.js?v=19"></script>
-<script src="js/auth-ui.js?v=19"></script>
-<script src="js/ads.js?v=19"></script>
-<script src="js/ttt.js?v=19"></script>
-<script src="js/ui.js?v=19"></script>
-<script src="js/motion.js?v=19"></script>
-<script src="js/duels.js?v=19"></script>
+<script src="js/firebase-config.js?v=20"></script>
+<script src="js/utils.js?v=20"></script>
+<script src="js/storage.js?v=20"></script>
+<script src="js/levels.js?v=20"></script>
+<script src="js/solver.js?v=20"></script>
+<script src="js/audio.js?v=20"></script>
+<script src="js/progression.js?v=20"></script>
+<script src="js/animations.js?v=20"></script>
+<script src="js/renderer.js?v=20"></script>
+<script src="js/game.js?v=20"></script>
+<script src="js/auth.js?v=20"></script>
+<script src="js/leaderboard-service.js?v=20"></script>
+<script src="js/auth-ui.js?v=20"></script>
+<script src="js/ads.js?v=20"></script>
+<script src="js/ttt.js?v=20"></script>
+<script src="js/ui.js?v=20"></script>
+<script src="js/addictive.js?v=20"></script>
+<script src="js/motion.js?v=20"></script>
+<script src="js/duels.js?v=20"></script>
 <!-- Script Fail-Safe Stubs for Cache Resiliency -->
 <script>
   if (typeof MotionManager === 'undefined') {

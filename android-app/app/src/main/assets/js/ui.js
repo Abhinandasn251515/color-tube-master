@@ -156,6 +156,15 @@ const UI = (() => {
       cell.appendChild(numEl);
       cell.appendChild(starsEl);
 
+      // Star-rating row (filled ★ / hollow ☆)
+      if (isCompleted && levelData) {
+        const stars = levelData.stars || 0;
+        const levelStarsEl = document.createElement('div');
+        levelStarsEl.className = 'level-stars';
+        levelStarsEl.textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
+        cell.appendChild(levelStarsEl);
+      }
+
       if (isUnlocked) {
         cell.addEventListener('click', () => {
           Audio.click();

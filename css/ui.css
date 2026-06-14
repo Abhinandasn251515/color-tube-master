@@ -415,24 +415,28 @@
   flex-direction: column;
   height: 100%;
   padding-bottom: 20px;
+  background: radial-gradient(circle at 50% 50%, #0d0b21 0%, #03020c 100%);
 }
 #screen-editor.active {
   display: flex;
 }
 
 .editor-hud {
-  padding: 10px 16px;
+  padding: 12px 16px;
   text-align: center;
   flex-shrink: 0;
 }
 .editor-status {
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.75);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 8px 12px;
+  color: #cffafe;
+  background: rgba(6, 182, 212, 0.05);
+  border: 1px solid rgba(6, 182, 212, 0.18);
+  border-left: 4px solid #06b6d4;
+  padding: 10px 14px;
   border-radius: var(--r-md);
   line-height: 1.4;
+  text-shadow: 0 0 8px rgba(6, 182, 212, 0.35);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2), inset 0 0 10px rgba(6, 182, 212, 0.05);
 }
 
 .editor-workspace {
@@ -441,12 +445,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 15px;
+  padding: 20px;
+  /* Glowing grid blueprint layout */
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(30, 27, 75, 0.3) 0%, rgba(15, 12, 41, 0.7) 100%),
+    linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, 0.015) 25%, rgba(255, 255, 255, 0.015) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.015) 75%, rgba(255, 255, 255, 0.015) 76%, transparent 77%),
+    linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, 0.015) 25%, rgba(255, 255, 255, 0.015) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.015) 75%, rgba(255, 255, 255, 0.015) 76%, transparent 77%);
+  background-size: 100%, 36px 36px, 36px 36px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 .editor-tubes-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 15px 12px;
+  gap: 20px 14px;
   justify-content: center;
   align-items: flex-end;
   max-width: 100%;
@@ -454,65 +466,113 @@
 
 #editor-tubes-grid .tube-wrap {
   cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+#editor-tubes-grid .tube-wrap:hover {
+  transform: translateY(-8px) scale(1.04);
 }
 #editor-tubes-grid .tube-wrap:hover .tube-glass-rim {
-  border-color: rgba(255,255,255,0.5);
-  box-shadow: 0 0 10px rgba(255,255,255,0.2);
+  border-color: rgba(255,255,255,0.6);
+  box-shadow: 0 0 14px rgba(255,255,255,0.3);
 }
 
 .editor-toolbar {
-  padding: 12px 16px;
-  background: rgba(15, 12, 41, 0.5);
+  padding: 14px 16px;
+  background: rgba(10, 8, 30, 0.7);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
   flex-shrink: 0;
 }
 .editor-section-title {
   font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.5);
-  margin-bottom: 8px;
-  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 10px;
+  font-weight: 900;
+  text-align: center;
 }
 .editor-palette {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
   justify-content: center;
+  max-width: 450px;
+  margin: 0 auto;
 }
+/* 3D Sphere Swatches with Top specular highlight reflection */
 .swatch {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.15);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
   cursor: pointer;
-  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s ease, box-shadow 0.2s ease;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 
+    inset -3px -3px 8px rgba(0,0,0,0.6), 
+    inset 3px 3px 8px rgba(255,255,255,0.35), 
+    0 4px 10px rgba(0,0,0,0.45);
+}
+.swatch::after {
+  content: '';
+  position: absolute;
+  top: 3px; left: 7px;
+  width: 9px; height: 5px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 100%);
+  border-radius: 50% 50% 40% 40% / 60% 60% 30% 30%;
+  transform: rotate(-10deg);
+  pointer-events: none;
 }
 .swatch:hover {
-  transform: scale(1.1);
+  transform: scale(1.15) translateY(-2px);
 }
 .swatch.active {
-  transform: scale(1.15);
-  border-color: #fff;
-  box-shadow: 0 0 12px rgba(255,255,255,0.7);
+  transform: scale(1.2) translateY(-2px);
+  border-color: #ffffff;
+  box-shadow: 
+    0 0 0 2px #ffffff,
+    0 0 16px rgba(255,255,255,0.75), 
+    inset -3px -3px 8px rgba(0,0,0,0.6), 
+    inset 3px 3px 8px rgba(255,255,255,0.35);
 }
 .swatch.eraser-swatch {
-  background: #374151;
+  background: linear-gradient(135deg, #4b5563 0%, #1f2937 100%);
   color: #fff;
-  font-size: 1rem;
+  font-size: 0.9rem;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+.swatch.eraser-swatch.active {
+  border-color: #ef4444;
+  box-shadow: 
+    0 0 0 2px #ef4444,
+    0 0 16px rgba(239,68,68,0.7), 
+    inset -3px -3px 8px rgba(0,0,0,0.6), 
+    inset 3px 3px 8px rgba(255,255,255,0.35);
 }
 
 .editor-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
   justify-content: center;
-  padding: 10px 16px;
+  padding: 12px 16px;
+  background: rgba(5, 3, 15, 0.8);
+  backdrop-filter: blur(20px);
   flex-shrink: 0;
+}
+.editor-actions button {
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.editor-actions button:hover {
+  transform: scale(1.04) translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+}
+.editor-actions button:active {
+  transform: scale(0.97) translateY(0);
 }
 
 /* ── Rewards & Referrals Screen ── */
@@ -520,9 +580,17 @@
   display: none;
   flex-direction: column;
   height: 100%;
+  background: radial-gradient(circle at 50% 50%, #0d0b21 0%, #03020c 100%);
 }
 #screen-rewards.active {
   display: flex;
+}
+#btn-open-rewards {
+  animation: rewardsButtonGlow 3s ease infinite alternate;
+}
+@keyframes rewardsButtonGlow {
+  0% { box-shadow: 0 4px 12px rgba(236,72,153,0.35); }
+  100% { box-shadow: 0 4px 24px rgba(124,58,237,0.7); }
 }
 
 /* ── Challenge Target HUD Banner ── */

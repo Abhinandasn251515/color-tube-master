@@ -67,16 +67,22 @@ const Animations = (() => {
     for (const p of bgParticles) {
       p.x += p.dx;
       p.y += p.dy;
-      p.pulse += 0.02;
-      p.alpha = 0.1 + Math.abs(Math.sin(p.pulse)) * 0.25;
+      p.pulse += 0.025;
+      p.alpha = 0.12 + Math.abs(Math.sin(p.pulse)) * 0.32;
 
-      if (p.y < -10) { p.y = bgCanvas.height + 10; p.x = Math.random() * bgCanvas.width; p.color = getThemeColor(); }
-      if (p.x < -10) p.x = bgCanvas.width + 10;
-      if (p.x > bgCanvas.width + 10) p.x = -10;
+      if (p.y < -15) { p.y = bgCanvas.height + 15; p.x = Math.random() * bgCanvas.width; p.color = getThemeColor(); }
+      if (p.x < -15) p.x = bgCanvas.width + 15;
+      if (p.x > bgCanvas.width + 15) p.x = -15;
+
+      // Draw soft glowing orb using radial gradient
+      const radGrad = bgCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 2.5);
+      radGrad.addColorStop(0, p.color);
+      radGrad.addColorStop(0.25, p.color);
+      radGrad.addColorStop(1, 'rgba(0,0,0,0)');
 
       bgCtx.beginPath();
-      bgCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      bgCtx.fillStyle = p.color;
+      bgCtx.arc(p.x, p.y, p.r * 2.5, 0, Math.PI * 2);
+      bgCtx.fillStyle = radGrad;
       bgCtx.globalAlpha = p.alpha;
       bgCtx.fill();
     }
@@ -200,65 +206,156 @@ const Animations = (() => {
     const ex = toRect.left   + toRect.width/2    - areaRect.left;
     const ey = toRect.top    - areaRect.top;
 
+    // Bounding metrics for target tube
+    const targetTubeCenterX = ex;
+    const cylinderHeight = toRect.height;
+    const targetLiquidCount = toEl.querySelectorAll('.liquid-layer').length;
+    const liquidSurfaceY = ey + cylinderHeight * (1 - (targetLiquidCount + 0.5) / 4);
+
     // Get liquid color
     const colorMap = {
-      red:'#ff5076', blue:'#5db8ff', green:'#20f890', yellow:'#ffe840',
-      purple:'#d070ff', orange:'#ff9030', pink:'#ff80c0', cyan:'#30f0ff',
-      lime:'#c0ff30', brown:'#c07040', teal:'#30d0b0', maroon:'#e03040',
-      navy:'#3060d0', indigo:'#7080f0', white:'#f0f0ff'
+      red:'#ff3366', blue:'#3399ff', green:'#2ae89b', yellow:'#ffee55',
+      purple:'#d27cff', orange:'#ff9e42', pink:'#ff7ab8', cyan:'#33f0ff',
+      lime:'#bdff33', brown:'#c47c4d', teal:'#33f5d1', maroon:'#ff4d6d',
+      navy:'#4d7cff', indigo:'#8c8cff', white:'#ffffff'
     };
     const fillColor = colorMap[color] || '#ffffff';
 
-    let t = 0;
-    const drops = [];
     const DUR = 400;
     const startTime = performance.now();
 
+    const splashParticles = [];
+    const bubbles = [];
+    let frameCount = 0;
+
     function drawFrame(now) {
-      t = Math.min((now - startTime) / DUR, 1);
+      const elapsed = now - startTime;
+      const t = Math.min(elapsed / DUR, 1);
+      frameCount++;
+
       pourCtx.clearRect(0, 0, pourCanvas.width, pourCanvas.height);
 
-      // Draw arc path
-      const cx = (sx + ex) / 2;
-      const cy = Math.min(sy, ey) - 40;
-
-      pourCtx.beginPath();
-      pourCtx.moveTo(sx, sy);
-      pourCtx.quadraticCurveTo(cx, cy, ex, ey);
-      pourCtx.strokeStyle = fillColor;
-      pourCtx.lineWidth = 5;
-      pourCtx.globalAlpha = 0.7 * (1 - t * 0.5);
-      pourCtx.stroke();
-      pourCtx.globalAlpha = 1;
-
-      // Animated drop along arc
-      const pt = t;
-      const dx = (1-pt)*(1-pt)*sx + 2*(1-pt)*pt*cx + pt*pt*ex;
-      const dy = (1-pt)*(1-pt)*sy + 2*(1-pt)*pt*cy + pt*pt*ey;
-
-      pourCtx.beginPath();
-      pourCtx.arc(dx, dy, 6, 0, Math.PI*2);
-      pourCtx.fillStyle = fillColor;
-      pourCtx.globalAlpha = 0.9;
-      pourCtx.fill();
-      pourCtx.globalAlpha = 1;
-
-      // Splash drops at destination
-      if (t > 0.8) {
-        const st = (t - 0.8) / 0.2;
-        for (let i = 0; i < 4; i++) {
-          const angle = (i / 4) * Math.PI * 2 + Math.PI * 0.5;
-          const dist  = st * 14;
-          pourCtx.beginPath();
-          pourCtx.arc(ex + Math.cos(angle)*dist, ey + Math.sin(angle)*dist, 3*(1-st), 0, Math.PI*2);
-          pourCtx.fillStyle = fillColor;
-          pourCtx.globalAlpha = (1-st) * 0.8;
-          pourCtx.fill();
+      // 1. Draw & Update Bubbles inside target tube
+      for (let i = bubbles.length - 1; i >= 0; i--) {
+        const b = bubbles[i];
+        b.y += b.vy;
+        b.wobblePhase += b.wobbleSpeed;
+        b.x = targetTubeCenterX + Math.sin(b.wobblePhase) * b.wobbleAmount;
+        
+        // check if popped at surface
+        if (b.y <= liquidSurfaceY || b.alpha <= 0.01) {
+          bubbles.splice(i, 1);
+          continue;
         }
+
+        pourCtx.beginPath();
+        pourCtx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+        pourCtx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+        pourCtx.lineWidth = 0.75;
+        pourCtx.stroke();
+
+        // bubble specular shine
+        pourCtx.beginPath();
+        pourCtx.arc(b.x - b.radius * 0.3, b.y - b.radius * 0.3, b.radius * 0.2, 0, Math.PI * 2);
+        pourCtx.fillStyle = '#ffffff';
+        pourCtx.fill();
+      }
+
+      // 2. Draw & Update Splash Particles
+      for (let i = splashParticles.length - 1; i >= 0; i--) {
+        const p = splashParticles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += p.gravity;
+        p.alpha -= p.decay;
+
+        if (p.alpha <= 0.01) {
+          splashParticles.splice(i, 1);
+          continue;
+        }
+
+        pourCtx.beginPath();
+        pourCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        pourCtx.fillStyle = p.color;
+        pourCtx.globalAlpha = p.alpha;
+        pourCtx.fill();
         pourCtx.globalAlpha = 1;
       }
 
-      if (t < 1) {
+      // 3. Draw Pour Stream Arc (if pouring is active)
+      if (t < 0.98) {
+        const cx = (sx + ex) / 2;
+        const cy = Math.min(sy, ey) - 40;
+
+        // Pass A: Outer glow stream
+        pourCtx.beginPath();
+        pourCtx.moveTo(sx, sy);
+        pourCtx.quadraticCurveTo(cx, cy, ex, ey);
+        pourCtx.strokeStyle = fillColor;
+        pourCtx.lineWidth = 7.5;
+        pourCtx.lineCap = 'round';
+        pourCtx.globalAlpha = 0.45 * (1 - t * 0.3);
+        pourCtx.stroke();
+
+        // Pass B: Inner hot-white core stream
+        pourCtx.beginPath();
+        pourCtx.moveTo(sx, sy);
+        pourCtx.quadraticCurveTo(cx, cy, ex, ey);
+        pourCtx.strokeStyle = '#ffffff';
+        pourCtx.lineWidth = 2.5;
+        pourCtx.lineCap = 'round';
+        pourCtx.globalAlpha = 0.95;
+        pourCtx.stroke();
+        pourCtx.globalAlpha = 1;
+
+        // Animated drop along arc
+        const pt = t;
+        const dx = (1-pt)*(1-pt)*sx + 2*(1-pt)*pt*cx + pt*pt*ex;
+        const dy = (1-pt)*(1-pt)*sy + 2*(1-pt)*pt*cy + pt*pt*ey;
+
+        pourCtx.beginPath();
+        pourCtx.arc(dx, dy, 7, 0, Math.PI*2);
+        pourCtx.fillStyle = fillColor;
+        pourCtx.shadowColor = fillColor;
+        pourCtx.shadowBlur = 8;
+        pourCtx.fill();
+        pourCtx.shadowBlur = 0; // reset shadow
+
+        // Spawn Splash Particles
+        if (t > 0.25) {
+          const spawnCount = Math.random() > 0.5 ? 2 : 1;
+          for (let k = 0; k < spawnCount; k++) {
+            splashParticles.push({
+              x: ex + (Math.random() - 0.5) * 8,
+              y: liquidSurfaceY + (Math.random() - 0.5) * 4,
+              vx: (Math.random() - 0.5) * 5,
+              vy: -1.5 - Math.random() * 4,
+              gravity: 0.22,
+              radius: 1.5 + Math.random() * 2,
+              color: fillColor,
+              alpha: 1.0,
+              decay: 0.03 + Math.random() * 0.04
+            });
+          }
+        }
+
+        // Spawn Bubbles rising from bottom
+        if (frameCount % 4 === 0) {
+          bubbles.push({
+            x: targetTubeCenterX + (Math.random() - 0.5) * (toRect.width - 12),
+            y: ey + cylinderHeight - 12,
+            vy: -1.2 - Math.random() * 1.5,
+            wobbleSpeed: 0.06 + Math.random() * 0.1,
+            wobbleAmount: 0.8 + Math.random() * 1.5,
+            wobblePhase: Math.random() * Math.PI * 2,
+            radius: 1.2 + Math.random() * 2.2,
+            alpha: 0.8
+          });
+        }
+      }
+
+      // 4. Continue Loop until animation completes AND particles fade out
+      if (t < 1 || splashParticles.length > 0 || bubbles.length > 0) {
         requestAnimationFrame(drawFrame);
       } else {
         pourCtx.clearRect(0, 0, pourCanvas.width, pourCanvas.height);

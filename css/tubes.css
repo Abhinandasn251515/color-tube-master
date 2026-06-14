@@ -97,6 +97,23 @@
   border-left:  1.5px solid rgba(255,255,255,0.18);
   border-right: 1.5px solid rgba(255,255,255,0.1);
 }
+/* 3D Cylinder Specular Highlight */
+.tube-cylinder::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    rgba(0, 0, 0, 0.4) 0%,
+    rgba(0, 0, 0, 0.15) 12%,
+    rgba(255, 255, 255, 0.28) 26%,
+    rgba(255, 255, 255, 0.12) 40%,
+    rgba(0, 0, 0, 0) 55%,
+    rgba(0, 0, 0, 0.2) 80%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
+  pointer-events: none;
+  z-index: 6;
+}
 
 /* Size variants */
 .sz-sm .tube-cylinder { width: 42px;  height: 120px; }
@@ -119,6 +136,19 @@
   border-right: 1.5px solid rgba(255,255,255,0.1);
   border-bottom: 1.5px solid rgba(255,255,255,0.15);
   border-radius: 0 0 50% 50% / 0 0 20px 20px;
+}
+/* 3D Spherical Base Shading */
+.tube-base::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% -10%,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(0, 0, 0, 0) 60%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+  pointer-events: none;
+  z-index: 6;
 }
 
 /* ── Glass Background ── */
@@ -193,44 +223,44 @@
   flex: 0 0 25%;  /* each of 4 layers = 25% */
   position: relative;
   transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
-  overflow: hidden;
+  overflow: visible; /* Allows meniscus pseudo-elements to overflow slightly for curved boundaries */
+  background-size: 200% 100%, 100% 100% !important;
+  background-repeat: no-repeat !important;
+  animation: liquidShimmer 3.2s ease-in-out infinite;
 }
 
-/* Liquid shimmer sweep */
+/* Liquid shimmer keyframes using background-position */
+@keyframes liquidShimmer {
+  0%   { background-position: -200% 0, 0 0; }
+  100% { background-position: 200% 0, 0 0; }
+}
+
+/* 3D Curved Meniscus boundaries between layers */
+.liquid-layer::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 0;
+  right: 0;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.55), 0 1px 1px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  pointer-events: none;
+}
 .liquid-layer::after {
   content: '';
   position: absolute;
-  top: 0; left: -200%;
-  width: 400%;
-  height: 100%;
-  background: linear-gradient(
-    105deg,
-    transparent 30%,
-    rgba(255,255,255,0.08) 45%,
-    rgba(255,255,255,0.18) 50%,
-    rgba(255,255,255,0.08) 55%,
-    transparent 70%
-  );
-  animation: liquidShimmer 2.8s ease-in-out infinite;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 -1.5px 2px rgba(0, 0, 0, 0.5);
+  z-index: 5;
   pointer-events: none;
-}
-@keyframes liquidShimmer {
-  0%   { transform: translateX(0%); }
-  100% { transform: translateX(50%); }
-}
-
-/* Top surface micro-ripple */
-.liquid-layer.top-layer::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-  background: rgba(255,255,255,0.35);
-  animation: surfaceRipple 2.5s ease-in-out infinite;
-}
-@keyframes surfaceRipple {
-  0%,100% { opacity: 0.35; transform: scaleY(1); }
-  50%     { opacity: 0.7; transform: scaleY(1.8); }
 }
 
 /* Bottom base liquid fill for tube-base */
@@ -242,23 +272,179 @@
 }
 
 /* ══════════════════════════════
-   LIQUID COLORS — Vibrant w/ Neon Glow
-══════════════════════════════ */
-.liquid-layer[data-color="red"],    .tube-base-fill[data-color="red"]    { background: linear-gradient(180deg, #ff5070 0%, #c81530 100%); box-shadow: inset 0 -2px 8px rgba(200,21,48,0.4); }
-.liquid-layer[data-color="blue"],   .tube-base-fill[data-color="blue"]   { background: linear-gradient(180deg, #60aaff 0%, #1d4ed8 100%); box-shadow: inset 0 -2px 8px rgba(29,78,216,0.4); }
-.liquid-layer[data-color="green"],  .tube-base-fill[data-color="green"]  { background: linear-gradient(180deg, #34d990 0%, #059669 100%); box-shadow: inset 0 -2px 8px rgba(5,150,105,0.4); }
-.liquid-layer[data-color="yellow"], .tube-base-fill[data-color="yellow"] { background: linear-gradient(180deg, #fde047 0%, #ca8a04 100%); box-shadow: inset 0 -2px 8px rgba(202,138,4,0.4); }
-.liquid-layer[data-color="purple"], .tube-base-fill[data-color="purple"] { background: linear-gradient(180deg, #c084fc 0%, #7e22ce 100%); box-shadow: inset 0 -2px 8px rgba(126,34,206,0.4); }
-.liquid-layer[data-color="orange"], .tube-base-fill[data-color="orange"] { background: linear-gradient(180deg, #fb923c 0%, #c2410c 100%); box-shadow: inset 0 -2px 8px rgba(194,65,12,0.4); }
-.liquid-layer[data-color="pink"],   .tube-base-fill[data-color="pink"]   { background: linear-gradient(180deg, #f472b6 0%, #be185d 100%); box-shadow: inset 0 -2px 8px rgba(190,24,93,0.4); }
-.liquid-layer[data-color="cyan"],   .tube-base-fill[data-color="cyan"]   { background: linear-gradient(180deg, #22d3ee 0%, #0e7490 100%); box-shadow: inset 0 -2px 8px rgba(14,116,144,0.4); }
-.liquid-layer[data-color="lime"],   .tube-base-fill[data-color="lime"]   { background: linear-gradient(180deg, #a3e635 0%, #4d7c0f 100%); box-shadow: inset 0 -2px 8px rgba(77,124,15,0.4); }
-.liquid-layer[data-color="brown"],  .tube-base-fill[data-color="brown"]  { background: linear-gradient(180deg, #d97706 0%, #78350f 100%); box-shadow: inset 0 -2px 8px rgba(120,53,15,0.4); }
-.liquid-layer[data-color="teal"],   .tube-base-fill[data-color="teal"]   { background: linear-gradient(180deg, #2dd4bf 0%, #0f766e 100%); box-shadow: inset 0 -2px 8px rgba(15,118,110,0.4); }
-.liquid-layer[data-color="maroon"], .tube-base-fill[data-color="maroon"] { background: linear-gradient(180deg, #f43f5e 0%, #881337 100%); box-shadow: inset 0 -2px 8px rgba(136,19,55,0.4); }
-.liquid-layer[data-color="navy"],   .tube-base-fill[data-color="navy"]   { background: linear-gradient(180deg, #3b82f6 0%, #1e3a8a 100%); box-shadow: inset 0 -2px 8px rgba(30,58,138,0.4); }
-.liquid-layer[data-color="indigo"], .tube-base-fill[data-color="indigo"] { background: linear-gradient(180deg, #818cf8 0%, #3730a3 100%); box-shadow: inset 0 -2px 8px rgba(55,48,163,0.4); }
-.liquid-layer[data-color="white"],  .tube-base-fill[data-color="white"]  { background: linear-gradient(180deg, #e2e8f0 0%, #94a3b8 100%); box-shadow: inset 0 -2px 8px rgba(148,163,184,0.4); }
+   LIQUID COLORS — Premium 3-Stop Gradients w/ Neon Glow
+   ══════════════════════════════ */
+/* Shimmer overlay gradient */
+.liquid-layer {
+  background-image: 
+    linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.06) 45%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.06) 55%, transparent 70%),
+    linear-gradient(180deg, #bbbbbb 0%, #888888 50%, #444444 100%);
+}
+
+.liquid-layer[data-color="red"] {
+  background-image: 
+    linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.06) 45%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.06) 55%, transparent 70%),
+    linear-gradient(180deg, #ff3366 0%, #d91438 50%, #8c001a 100%);
+  box-shadow: inset 0 -2px 8px rgba(200,21,48,0.5);
+}
+.tube-base-fill[data-color="red"] {
+  background: linear-gradient(180deg, #d91438 0%, #8c001a 100%);
+  box-shadow: inset 0 -2px 8px rgba(200,21,48,0.5);
+}
+
+.liquid-layer[data-color="blue"] {
+  background-image: 
+    linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.06) 45%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.06) 55%, transparent 70%),
+    linear-gradient(180deg, #3399ff 0%, #1a53ff 50%, #002db3 100%);
+  box-shadow: inset 0 -2px 8px rgba(29,78,216,0.5);
+}
+.tube-base-fill[data-color="blue"] {
+  background: linear-gradient(180deg, #1a53ff 0%, #002db3 100%);
+  box-shadow: inset 0 -2px 8px rgba(29,78,216,0.5);
+}
+
+.liquid-layer[data-color="green"] {
+  background-image: 
+    linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.06) 45%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.06) 55%, transparent 70%),
+    linear-gradient(180deg, #2ae89b 0%, #0db86e 50%, #066e40 100%);
+  box-shadow: inset 0 -2px 8px rgba(5,150,105,0.5);
+}
+.tube-base-fill[data-color="green"] {
+  background: linear-gradient(180deg, #0db86e 0%, #066e40 100%);
+  box-shadow: inset 0 -2px 8px rgba(5,150,105,0.5);
+}
+
+.liquid-layer[data-color="yellow"] {
+  background-image: 
+    linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.06) 45%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.06) 55%, transparent 70%),
+    linear-gradient(180deg, #ffee55 0%, #e0aa00 50%, #8a6600 100%);
+  box-shadow: inset 0 -2px 8px rgba(202,138,4,0.5);
+}
+.tube-base-fill[data-color="yellow"] {
+  background: linear-gradient(180deg, #e0aa00 0%, #8a6600 100%);
+  box-shadow: inset 0 -2px 8px rgba(202,138,4,0.5);
+}
+
+.liquid-layer[data-color="purple"] {
+  background-image: 
+    linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.06) 45%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.06) 55%, transparent 70%),
+    linear-gradient(180deg, #d27cff 0%, #9e36e6 50%, #5b0fa3 100%);
+  box-shadow: inset 0 -2px 8px rgba(126,34,206,0.5);
+}
+.tube-base-fill[data-color="purple"] {
+  background: linear-gradient(180deg, #9e36e6 0%, #5b0fa3 100%);
+  box-shadow: inset 0 -2px 8px rgba(126,34,206,0.5);
+}
+
+.liquid-layer[data-color="orange"] {
+  background-image: 
+    linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.06) 45%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.06) 55%, transparent 70%),
+    linear-gradient(180deg, #ff9e42 0%, #e65c00 50%, #993d00 100%);
+  box-shadow: inset 0 -2px 8px rgba(194,65,12,0.5);
+}
+.tube-base-fill[data-color="orange"] {
+  background: linear-gradient(180deg, #e65c00 0%, #993d00 100%);
+  box-shadow: inset 0 -2px 8px rgba(194,65,12,0.5);
+}
+
+.liquid-layer[data-color="pink"] {
+  background-image: 
+    linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.06) 45%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.06) 55%, transparent 70%),
+    linear-gradient(180deg, #ff7ab8 0%, #e62272 50%, #990c47 100%);
+  box-shadow: inset 0 -2px 8px rgba(190,24,93,0.5);
+}
+.tube-base-fill[data-color="pink"] {
+  background: linear-gradient(180deg, #e62272 0%, #990c47 100%);
+  box-shadow: inset 0 -2px 8px rgba(190,24,93,0.5);
+}
+
+.liquid-layer[data-color="cyan"] {
+  background-image: 
+    linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.06) 45%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.06) 55%, transparent 70%),
+    linear-gradient(180deg, #33f0ff 0%, #0db0e0 50%, #066d8c 100%);
+  box-shadow: inset 0 -2px 8px rgba(14,116,144,0.5);
+}
+.tube-base-fill[data-color="cyan"] {
+  background: linear-gradient(180deg, #0db0e0 0%, #066d8c 100%);
+  box-shadow: inset 0 -2px 8px rgba(14,116,144,0.5);
+}
+
+.liquid-layer[data-color="lime"] {
+  background-image: 
+    linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.06) 45%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.06) 55%, transparent 70%),
+    linear-gradient(180deg, #bdff33 0%, #8ccf00 50%, #528000 100%);
+  box-shadow: inset 0 -2px 8px rgba(77,124,15,0.5);
+}
+.tube-base-fill[data-color="lime"] {
+  background: linear-gradient(180deg, #8ccf00 0%, #528000 100%);
+  box-shadow: inset 0 -2px 8px rgba(77,124,15,0.5);
+}
+
+.liquid-layer[data-color="brown"] {
+  background-image: 
+    linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.06) 45%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.06) 55%, transparent 70%),
+    linear-gradient(180deg, #c47c4d 0%, #8c4b23 50%, #522509 100%);
+  box-shadow: inset 0 -2px 8px rgba(120,53,15,0.5);
+}
+.tube-base-fill[data-color="brown"] {
+  background: linear-gradient(180deg, #8c4b23 0%, #522509 100%);
+  box-shadow: inset 0 -2px 8px rgba(120,53,15,0.5);
+}
+
+.liquid-layer[data-color="teal"] {
+  background-image: 
+    linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.06) 45%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.06) 55%, transparent 70%),
+    linear-gradient(180deg, #33f5d1 0%, #0cbfa2 50%, #067361 100%);
+  box-shadow: inset 0 -2px 8px rgba(15,118,110,0.5);
+}
+.tube-base-fill[data-color="teal"] {
+  background: linear-gradient(180deg, #0cbfa2 0%, #067361 100%);
+  box-shadow: inset 0 -2px 8px rgba(15,118,110,0.5);
+}
+
+.liquid-layer[data-color="maroon"] {
+  background-image: 
+    linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.06) 45%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.06) 55%, transparent 70%),
+    linear-gradient(180deg, #ff4d6d 0%, #b3002d 50%, #660017 100%);
+  box-shadow: inset 0 -2px 8px rgba(136,19,55,0.5);
+}
+.tube-base-fill[data-color="maroon"] {
+  background: linear-gradient(180deg, #b3002d 0%, #660017 100%);
+  box-shadow: inset 0 -2px 8px rgba(136,19,55,0.5);
+}
+
+.liquid-layer[data-color="navy"] {
+  background-image: 
+    linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.06) 45%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.06) 55%, transparent 70%),
+    linear-gradient(180deg, #4d7cff 0%, #1a3cbf 50%, #071980 100%);
+  box-shadow: inset 0 -2px 8px rgba(30,58,138,0.5);
+}
+.tube-base-fill[data-color="navy"] {
+  background: linear-gradient(180deg, #1a3cbf 0%, #071980 100%);
+  box-shadow: inset 0 -2px 8px rgba(30,58,138,0.5);
+}
+
+.liquid-layer[data-color="indigo"] {
+  background-image: 
+    linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.06) 45%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.06) 55%, transparent 70%),
+    linear-gradient(180deg, #8c8cff 0%, #4747e6 50%, #2424a6 100%);
+  box-shadow: inset 0 -2px 8px rgba(55,48,163,0.5);
+}
+.tube-base-fill[data-color="indigo"] {
+  background: linear-gradient(180deg, #4747e6 0%, #2424a6 100%);
+  box-shadow: inset 0 -2px 8px rgba(55,48,163,0.5);
+}
+
+.liquid-layer[data-color="white"] {
+  background-image: 
+    linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.06) 45%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.06) 55%, transparent 70%),
+    linear-gradient(180deg, #ffffff 0%, #cbd5e1 50%, #64748b 100%);
+  box-shadow: inset 0 -2px 8px rgba(148,163,184,0.5);
+}
+.tube-base-fill[data-color="white"] {
+  background: linear-gradient(180deg, #cbd5e1 0%, #64748b 100%);
+  box-shadow: inset 0 -2px 8px rgba(148,163,184,0.5);
+}
 
 /* ══════════════════════════════
    TUBE WRAP SIZES
@@ -280,12 +466,47 @@
 /* ── SKINS ── */
 .skin-crystal .tube-glass-shine { background: linear-gradient(180deg, rgba(180,224,255,0.5) 0%, rgba(180,224,255,0.08) 100%); }
 .skin-crystal .tube-glass-rim   { border-color: rgba(180,224,255,0.5); background: linear-gradient(180deg, rgba(180,224,255,0.4) 0%, rgba(180,224,255,0.08) 100%); }
-.skin-neon    .tube-glass-rim   { border-color: rgba(0,255,200,0.6); box-shadow: 0 0 8px rgba(0,255,200,0.4); }
+.skin-crystal .tube-cylinder::after {
+  background: linear-gradient(90deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.45) 26%,
+    rgba(255, 255, 255, 0) 55%,
+    rgba(255, 255, 255, 0.25) 100%
+  );
+}
+
+.skin-neon    .tube-glass-rim   { border-color: rgba(0,255,200,0.8); box-shadow: 0 0 10px rgba(0,255,200,0.5); }
 .skin-neon    .tube-glass-shine { background: linear-gradient(180deg, rgba(0,255,200,0.3) 0%, rgba(0,255,200,0.04) 100%); }
-.skin-gold    .tube-glass-rim   { border-color: rgba(252,211,77,0.6); box-shadow: 0 0 8px rgba(252,211,77,0.4); }
+.skin-neon    .tube-cylinder::after {
+  background: linear-gradient(90deg,
+    rgba(255, 0, 128, 0.25) 0%,
+    rgba(0, 255, 200, 0.35) 26%,
+    rgba(0, 255, 200, 0) 55%,
+    rgba(255, 0, 128, 0.2) 100%
+  );
+}
+
+.skin-gold    .tube-glass-rim   { border-color: rgba(252,211,77,0.8); box-shadow: 0 0 10px rgba(252,211,77,0.5); }
 .skin-gold    .tube-glass-shine { background: linear-gradient(180deg, rgba(252,211,77,0.35) 0%, rgba(252,211,77,0.05) 100%); }
-.skin-shadow  .tube-glass-bg    { background: rgba(0,0,0,0.6); }
-.skin-shadow  .tube-glass-rim   { border-color: rgba(255,255,255,0.06); background: rgba(0,0,0,0.5); }
+.skin-gold    .tube-cylinder::after {
+  background: linear-gradient(90deg,
+    rgba(217, 119, 6, 0.25) 0%,
+    rgba(253, 224, 71, 0.35) 26%,
+    rgba(253, 224, 71, 0) 55%,
+    rgba(217, 119, 6, 0.2) 100%
+  );
+}
+
+.skin-shadow  .tube-glass-bg    { background: rgba(0,0,0,0.65); }
+.skin-shadow  .tube-glass-rim   { border-color: rgba(255,255,255,0.06); background: rgba(0,0,0,0.6); }
+.skin-shadow  .tube-cylinder::after {
+  background: linear-gradient(90deg,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0.2) 26%,
+    rgba(255, 255, 255, 0.08) 55%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+}
 
 /* ── Responsive ── */
 @media (max-width: 400px) {

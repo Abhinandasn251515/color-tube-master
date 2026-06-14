@@ -36,22 +36,22 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <!-- Styles -->
-  <link rel="stylesheet" href="css/main.css"/>
-  <link rel="stylesheet" href="css/tubes.css"/>
-  <link rel="stylesheet" href="css/ui.css"/>
-  <link rel="stylesheet" href="css/themes.css"/>
-  <link rel="stylesheet" href="css/auth.css"/>
-  <link rel="stylesheet" href="css/ads.css"/>
-  <link rel="stylesheet" href="css/ttt.css"/>
+  <link rel="stylesheet" href="css/main.css?v=19"/>
+  <link rel="stylesheet" href="css/tubes.css?v=19"/>
+  <link rel="stylesheet" href="css/ui.css?v=19"/>
+  <link rel="stylesheet" href="css/themes.css?v=19"/>
+  <link rel="stylesheet" href="css/auth.css?v=19"/>
+  <link rel="stylesheet" href="css/ads.css?v=19"/>
+  <link rel="stylesheet" href="css/ttt.css?v=19"/>
   <!-- Google AdSense Verification -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9764011589946758"
      crossorigin="anonymous"></script>
 </head>
 <body class="theme-lab">
 
-<!-- Programmatic Cache Wipeout (Force upgrade to v19) -->
+<!-- Programmatic Cache Wipeout (Force upgrade to v20) -->
 <script>
-  if (!localStorage.getItem('ctm3d_wipeout_v19')) {
+  if (!localStorage.getItem('ctm3d_wipeout_v20')) {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations().then(registrations => {
         for (const registration of registrations) {
@@ -60,22 +60,22 @@
         if (window.caches) {
           caches.keys().then(keys => {
             Promise.all(keys.map(key => caches.delete(key))).then(() => {
-              localStorage.setItem('ctm3d_wipeout_v19', 'true');
+              localStorage.setItem('ctm3d_wipeout_v20', 'true');
               window.location.reload();
             });
           }).catch(() => {
-            localStorage.setItem('ctm3d_wipeout_v19', 'true');
+            localStorage.setItem('ctm3d_wipeout_v20', 'true');
             window.location.reload();
           });
         } else {
-          localStorage.setItem('ctm3d_wipeout_v19', 'true');
+          localStorage.setItem('ctm3d_wipeout_v20', 'true');
           window.location.reload();
         }
       }).catch(() => {
-        localStorage.setItem('ctm3d_wipeout_v19', 'true');
+        localStorage.setItem('ctm3d_wipeout_v20', 'true');
       });
     } else {
-      localStorage.setItem('ctm3d_wipeout_v19', 'true');
+      localStorage.setItem('ctm3d_wipeout_v20', 'true');
     }
   }
 </script>
@@ -889,25 +889,40 @@
 </div>
 
 <!-- ════════ SCRIPTS ════════ -->
-<script src="js/firebase-config.js"></script>
-<script src="js/utils.js"></script>
-<script src="js/storage.js"></script>
-<script src="js/levels.js"></script>
-<script src="js/solver.js"></script>
-<script src="js/audio.js"></script>
-<script src="js/progression.js"></script>
-<script src="js/animations.js"></script>
-<script src="js/renderer.js"></script>
-<script src="js/game.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/leaderboard-service.js"></script>
-<script src="js/auth-ui.js"></script>
-<script src="js/ads.js"></script>
-<script src="js/ttt.js"></script>
-<script src="js/ui.js"></script>
-<script src="js/motion.js"></script>
-<script src="js/duels.js"></script>
-<script src="js/main.js"></script>
+<script src="js/firebase-config.js?v=19"></script>
+<script src="js/utils.js?v=19"></script>
+<script src="js/storage.js?v=19"></script>
+<script src="js/levels.js?v=19"></script>
+<script src="js/solver.js?v=19"></script>
+<script src="js/audio.js?v=19"></script>
+<script src="js/progression.js?v=19"></script>
+<script src="js/animations.js?v=19"></script>
+<script src="js/renderer.js?v=19"></script>
+<script src="js/game.js?v=19"></script>
+<script src="js/auth.js?v=19"></script>
+<script src="js/leaderboard-service.js?v=19"></script>
+<script src="js/auth-ui.js?v=19"></script>
+<script src="js/ads.js?v=19"></script>
+<script src="js/ttt.js?v=19"></script>
+<script src="js/ui.js?v=19"></script>
+<script src="js/motion.js?v=19"></script>
+<script src="js/duels.js?v=19"></script>
+<!-- Script Fail-Safe Stubs for Cache Resiliency -->
+<script>
+  if (typeof MotionManager === 'undefined') {
+    window.MotionManager = {
+      init: function() { console.warn('[Fallback Stub] MotionManager init called.'); }
+    };
+  }
+  if (typeof DuelsManager === 'undefined') {
+    window.DuelsManager = {
+      init: function() { console.warn('[Fallback Stub] DuelsManager init called.'); },
+      stopDuel: function() {},
+      loadChallengers: function() {}
+    };
+  }
+</script>
+<script src="js/main.js?v=19"></script>
 
 <!-- Service Worker Registration -->
 <script>

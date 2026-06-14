@@ -21,6 +21,7 @@
     UI.bindEvents();
     UI.initSettings();
     TicTacToe3D.init();
+    MotionManager.init();
 
     // 5. Bind auth UI events
     AuthUI.bindEvents();

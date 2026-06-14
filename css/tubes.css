@@ -335,3 +335,19 @@
   to { transform: translateX(-50%) rotate(360deg); }
 }
 
+/* ── Tilt Highlight Style ── */
+.tube-wrap.tilt-highlight .tube-glass-rim {
+  border-color: #00ffcc !important;
+  box-shadow: 0 -2px 10px rgba(0, 255, 204, 0.5), 0 0 15px rgba(0, 255, 204, 0.25);
+}
+.tube-wrap.tilt-highlight .tube-cylinder {
+  border-left-color: #00ffcc !important;
+  border-right-color: #00ffcc !important;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+}
+.tube-wrap.tilt-highlight .tube-base {
+  border-left-color: #00ffcc !important;
+  border-right-color: #00ffcc !important;
+  border-bottom-color: #00ffcc !important;
+}
+

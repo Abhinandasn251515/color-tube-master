@@ -55,7 +55,8 @@ const Game = (() => {
 
     // Render
     Renderer.init();
-    Renderer.renderTubes(state.tubes, state.tubeSize);
+    const filters = state.levelData ? state.levelData.filters : [];
+    Renderer.renderTubes(state.tubes, state.tubeSize, filters);
     setupTubeListeners();
 
     // Start timer
@@ -133,7 +134,8 @@ const Game = (() => {
 
   // ── Pour Execution ────────────────────────────────────
   async function executePour(fromIdx, toIdx) {
-    if (!Solver.canPour(state.tubes, fromIdx, toIdx)) {
+    const filters = state.levelData ? state.levelData.filters : [];
+    if (!Solver.canPour(state.tubes, fromIdx, toIdx, filters)) {
       Renderer.shakeTube(toIdx);
       Renderer.clearSelection();
       state.selected = -1;
@@ -151,7 +153,7 @@ const Game = (() => {
     const fromColor = Solver.topColor(state.tubes[fromIdx]);
 
     // Execute pour on state
-    Solver.pour(state.tubes, fromIdx, toIdx);
+    Solver.pour(state.tubes, fromIdx, toIdx, filters);
     state.moves++;
 
     // Visual: animate pour
@@ -196,7 +198,8 @@ const Game = (() => {
     state.usedUndo = true;
     state.moves    = Math.max(0, state.moves - 1);
 
-    Renderer.renderTubes(state.tubes, state.tubeSize);
+    const filters = state.levelData ? state.levelData.filters : [];
+    Renderer.renderTubes(state.tubes, state.tubeSize, filters);
     setupTubeListeners();
     Renderer.markAllDone(state.tubes);
     updateHUD();
@@ -212,7 +215,8 @@ const Game = (() => {
     const hints = Storage.get('hintsRemaining') || 0;
     if (hints <= 0) return false;
 
-    const move = Solver.getHint(state.tubes);
+    const filters = state.levelData ? state.levelData.filters : [];
+    const move = Solver.getHint(state.tubes, filters);
     if (!move) return false;
 
     state.usedHint = true;
@@ -243,7 +247,8 @@ const Game = (() => {
   async function autoSolve() {
     if (state.autoSolving || state.phase === 'WIN') return;
 
-    const solution = Solver.solve(state.tubes, 80000);
+    const filters = state.levelData ? state.levelData.filters : [];
+    const solution = Solver.solve(state.tubes, 80000, filters);
     if (!solution || !solution.length) {
       alert('No solution found for current state! Try restarting.');
       return;
@@ -256,7 +261,7 @@ const Game = (() => {
       if (!state.autoSolving) break;
       await Utils.wait(80);
       const fromColor = Solver.topColor(state.tubes[from]);
-      Solver.pour(state.tubes, from, to);
+      Solver.pour(state.tubes, from, to, filters);
       state.moves++;
 
       await Renderer.animatePour(from, to, fromColor);

@@ -55,7 +55,7 @@ const Levels = (() => {
       tubes: [['green','red','green','red'],['red','green','red','green'],[],[]], emptyTubes:2 },
 
     { id:3,  difficulty:'beginner',
-      tubes: [['blue','yellow','blue','yellow'],['yellow','blue','yellow','blue'],[]], emptyTubes:1 },
+      tubes: [['blue','yellow','blue','yellow'],['yellow','blue','yellow','blue'],[]], emptyTubes:1, filters:[2] },
 
     { id:4,  difficulty:'beginner',
       tubes: [['red','blue','green','red'],['blue','green','red','blue'],['green','red','blue','green'],[]], emptyTubes:1 },

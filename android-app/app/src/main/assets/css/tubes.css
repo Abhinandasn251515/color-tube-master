@@ -303,3 +303,35 @@
   .sz-xl .tube-base { width: 52px; }
   .tubes-container { gap: 10px; }
 }
+
+/* ── Filter Tube Styling ── */
+.tube-filter .tube-glass-rim {
+  border-color: rgba(255, 165, 0, 0.65) !important;
+  box-shadow: 0 -2px 8px rgba(255, 165, 0, 0.25);
+}
+.tube-filter .tube-cylinder {
+  border-left-color: rgba(255, 165, 0, 0.5) !important;
+  border-right-color: rgba(255, 165, 0, 0.35) !important;
+  background: radial-gradient(circle at center, rgba(255, 165, 0, 0.08) 0%, transparent 70%);
+}
+.tube-filter .tube-base {
+  border-left-color: rgba(255, 165, 0, 0.5) !important;
+  border-right-color: rgba(255, 165, 0, 0.35) !important;
+  border-bottom-color: rgba(255, 165, 0, 0.55) !important;
+}
+.tube-filter .tube-glass-center::after {
+  content: '⚙️';
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.8rem;
+  opacity: 0.45;
+  animation: filter-spin 10s linear infinite;
+  pointer-events: none;
+}
+@keyframes filter-spin {
+  from { transform: translateX(-50%) rotate(0deg); }
+  to { transform: translateX(-50%) rotate(360deg); }
+}
+

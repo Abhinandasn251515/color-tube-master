@@ -12,9 +12,9 @@ const Renderer = (() => {
   }
 
   /** Build tube HTML with new premium structure */
-  function buildTubeHTML(tube, idx, tubeSize, skinClass) {
+  function buildTubeHTML(tube, idx, tubeSize, skinClass, isFilter = false) {
     const wrap = document.createElement('div');
-    wrap.className = `tube-wrap ${tubeSize || 'sz-md'}`;
+    wrap.className = `tube-wrap ${tubeSize || 'sz-md'} ${isFilter ? 'tube-filter' : ''}`;
     wrap.dataset.idx = idx;
 
     // Glass rim (top opening)
@@ -87,7 +87,7 @@ const Renderer = (() => {
   }
 
   /** Render full tube grid */
-  function renderTubes(tubes, tubeSize) {
+  function renderTubes(tubes, tubeSize, filterIndices = []) {
     if (!container) init();
     container.innerHTML = '';
     tubeEls = [];
@@ -96,7 +96,8 @@ const Renderer = (() => {
     const skinClass = skin !== 'default' ? `skin-${skin}` : '';
 
     tubes.forEach((tube, idx) => {
-      const wrap = buildTubeHTML(tube, idx, tubeSize, skinClass);
+      const isFilter = filterIndices && filterIndices.includes(idx);
+      const wrap = buildTubeHTML(tube, idx, tubeSize, skinClass, isFilter);
       container.appendChild(wrap);
       tubeEls.push(wrap);
     });

@@ -660,6 +660,68 @@
         To install on iOS: Tap Share (📤) in Safari and select **"Add to Home Screen"** (➕).
       </div>
     </div>
+    <!-- ── Developer Info ── -->
+    <div class="settings-section dev-card-section">
+      <div class="settings-section-title">👨‍💻 Developer</div>
+      <div class="dev-card">
+        <div class="dev-avatar-wrap">
+          <div class="dev-avatar">A</div>
+          <div class="dev-avatar-ring"></div>
+        </div>
+        <div class="dev-info">
+          <div class="dev-name">Abhinandan S N</div>
+          <div class="dev-role">Indie Game Developer & Designer</div>
+          <div class="dev-links">
+            <a class="dev-link" href="https://github.com/Abhinandasn251515" target="_blank" rel="noopener">
+              <span>⌨️</span> GitHub
+            </a>
+            <a class="dev-link dev-link-gold" href="https://color-tube-master.web.app" target="_blank" rel="noopener">
+              <span>🌐</span> Web App
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="dev-about">
+        <p>Color Tube Master 3D is a passion project built with pure HTML, CSS &amp; JavaScript — no game engine, no frameworks, just code and creativity. 🎨</p>
+        <p>Every glass tube, fluid drop and particle effect is crafted by hand. If you love the game, please share it with your friends! 🚀</p>
+      </div>
+      <div class="dev-stats-row">
+        <div class="dev-stat"><span class="dev-stat-val">100%</span><span class="dev-stat-lbl">Handcoded</span></div>
+        <div class="dev-stat"><span class="dev-stat-val">3D</span><span class="dev-stat-lbl">Pure CSS</span></div>
+        <div class="dev-stat"><span class="dev-stat-val">∞</span><span class="dev-stat-lbl">Passion</span></div>
+      </div>
+    </div>
+
+    <!-- ── Feedback ── -->
+    <div class="settings-section feedback-section">
+      <div class="settings-section-title">💬 Send Feedback</div>
+      <div class="feedback-body">
+        <div class="feedback-rating-label">How would you rate the game?</div>
+        <div class="star-rating" id="star-rating">
+          <span class="star-btn" data-val="1">★</span>
+          <span class="star-btn" data-val="2">★</span>
+          <span class="star-btn" data-val="3">★</span>
+          <span class="star-btn" data-val="4">★</span>
+          <span class="star-btn" data-val="5">★</span>
+        </div>
+        <div class="feedback-category-row">
+          <button class="fb-cat active" data-cat="general">💡 General</button>
+          <button class="fb-cat" data-cat="bug">🐛 Bug</button>
+          <button class="fb-cat" data-cat="feature">✨ Feature</button>
+          <button class="fb-cat" data-cat="graphics">🎨 Graphics</button>
+        </div>
+        <textarea class="feedback-input" id="feedback-text" placeholder="Tell us what you think… (optional)" maxlength="500" rows="3"></textarea>
+        <div class="feedback-char-count"><span id="feedback-char">0</span>/500</div>
+        <button class="feedback-submit-btn" id="btn-submit-feedback">
+          <span id="feedback-btn-text">🚀 Send Feedback</span>
+        </button>
+        <div class="feedback-success" id="feedback-success" style="display:none;">
+          <span class="feedback-success-icon">✅</span>
+          <span>Thank you! Your feedback means the world to us 💜</span>
+        </div>
+      </div>
+    </div>
+
     <button class="btn-danger" id="btn-reset">⚠️ Reset All Progress</button>
   </div>
 </div>

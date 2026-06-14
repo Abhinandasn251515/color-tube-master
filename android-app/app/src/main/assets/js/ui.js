@@ -1587,6 +1587,139 @@ const UI = (() => {
     document.addEventListener('click', () => Audio.resume(), { once: true });
   }
 
+  // ── Developer Info & Feedback System ────────────────────
+  let feedbackRating = 0;
+  let feedbackCategory = 'general';
+
+  function initFeedback() {
+    // Star rating
+    const stars = document.querySelectorAll('.star-btn');
+    stars.forEach(star => {
+      star.addEventListener('mouseenter', () => {
+        const val = +star.dataset.val;
+        stars.forEach(s => {
+          s.classList.toggle('active', +s.dataset.val <= val);
+          s.classList.remove('selected');
+        });
+      });
+      star.addEventListener('mouseleave', () => {
+        stars.forEach(s => {
+          s.classList.remove('active');
+          s.classList.toggle('selected', +s.dataset.val <= feedbackRating);
+        });
+      });
+      star.addEventListener('click', () => {
+        feedbackRating = +star.dataset.val;
+        stars.forEach(s => {
+          s.classList.remove('active');
+          s.classList.toggle('selected', +s.dataset.val <= feedbackRating);
+        });
+        Audio.collect && Audio.collect();
+      });
+    });
+
+    // Category tabs
+    document.querySelectorAll('.fb-cat').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.fb-cat').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        feedbackCategory = btn.dataset.cat;
+      });
+    });
+
+    // Character counter
+    const textarea = document.getElementById('feedback-text');
+    const charSpan = document.getElementById('feedback-char');
+    if (textarea && charSpan) {
+      textarea.addEventListener('input', () => {
+        charSpan.textContent = textarea.value.length;
+        charSpan.style.color = textarea.value.length > 450
+          ? 'rgba(239,68,68,0.7)' : 'rgba(255,255,255,0.3)';
+      });
+    }
+
+    // Submit button
+    const submitBtn = document.getElementById('btn-submit-feedback');
+    const successEl = document.getElementById('feedback-success');
+    if (submitBtn) {
+      submitBtn.addEventListener('click', () => {
+        if (feedbackRating === 0) {
+          showToast('⭐ Please rate the game first!');
+          return;
+        }
+
+        const text = textarea ? textarea.value.trim() : '';
+        const playerName = Storage.get('playerName') || 'Anonymous';
+        const progress = Storage.get('progress') || {};
+
+        // Build feedback payload
+        const payload = {
+          rating: feedbackRating,
+          category: feedbackCategory,
+          message: text,
+          player: playerName,
+          levelsCompleted: Object.keys(progress).length,
+          version: '1.0.0',
+          timestamp: new Date().toISOString()
+        };
+
+        // Save locally
+        const savedFeedback = JSON.parse(localStorage.getItem('ctm_feedback_log') || '[]');
+        savedFeedback.push(payload);
+        localStorage.setItem('ctm_feedback_log', JSON.stringify(savedFeedback));
+
+        // Also try to send via mailto link as a fallback mechanism
+        const subject = encodeURIComponent(`[CTM3D Feedback] ${feedbackCategory} - ${feedbackRating}⭐ from ${playerName}`);
+        const body = encodeURIComponent(
+          `Rating: ${feedbackRating}/5 ⭐\nCategory: ${feedbackCategory}\nPlayer: ${playerName}\nLevels Completed: ${payload.levelsCompleted}\n\nMessage:\n${text || '(no message)'}\n\nVersion: ${payload.version}\nTimestamp: ${payload.timestamp}`
+        );
+
+        // Open mailto with feedback (if user is on a device with email)
+        const mailtoLink = `mailto:abhinandans251515@gmail.com?subject=${subject}&body=${body}`;
+
+        // Show success UI
+        submitBtn.disabled = true;
+        submitBtn.style.display = 'none';
+        if (successEl) {
+          successEl.style.display = 'flex';
+        }
+
+        // Celebrate
+        if (feedbackRating >= 4) {
+          Animations.startConfetti && Animations.startConfetti();
+          setTimeout(() => Animations.stopConfetti && Animations.stopConfetti(), 3500);
+        }
+
+        showToast(`💜 Thanks for your ${feedbackRating}⭐ rating!`);
+
+        // Open email client
+        setTimeout(() => {
+          window.open(mailtoLink, '_blank');
+        }, 500);
+
+        // Reset form after delay
+        setTimeout(() => {
+          feedbackRating = 0;
+          feedbackCategory = 'general';
+          if (textarea) textarea.value = '';
+          if (charSpan) charSpan.textContent = '0';
+          document.querySelectorAll('.star-btn').forEach(s => s.classList.remove('selected', 'active'));
+          document.querySelectorAll('.fb-cat').forEach(b => b.classList.remove('active'));
+          const genBtn = document.querySelector('.fb-cat[data-cat="general"]');
+          if (genBtn) genBtn.classList.add('active');
+          submitBtn.disabled = false;
+          submitBtn.style.display = 'block';
+          if (successEl) successEl.style.display = 'none';
+        }, 6000);
+      });
+    }
+  }
+
+  // Initialize feedback on DOMContentLoaded
+  document.addEventListener('DOMContentLoaded', () => {
+    initFeedback();
+  });
+
   return {
     showScreen, refreshMenu, startLevel, startDailyChallenge,
     startInfiniteMode, applyTheme, initSettings, showAdModal,

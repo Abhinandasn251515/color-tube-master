@@ -33,9 +33,20 @@ const Storage = (() => {
     weeklyScore:   0,
     weeklyDate:    null,
     infiniteHighScore: 0,
+    claimedCodes:  {},
+    referralCode:  '',
   };
 
   let _data = null;
+
+  function generateReferralCode() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let code = 'CTM-';
+    for (let i = 0; i < 6; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return code;
+  }
 
   function load() {
     try {
@@ -45,9 +56,14 @@ const Storage = (() => {
       } else {
         _data = { ...DEFAULTS };
       }
+      if (!_data.referralCode) {
+        _data.referralCode = generateReferralCode();
+        save();
+      }
     } catch(e) {
       console.warn('Save load error, using defaults:', e);
       _data = { ...DEFAULTS };
+      _data.referralCode = generateReferralCode();
     }
     return _data;
   }

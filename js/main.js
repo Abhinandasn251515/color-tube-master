@@ -115,6 +115,17 @@
 
   // ── Go to main menu ───────────────────────────────────
   function goToMenu(user) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const customParam = urlParams.get('custom');
+    if (customParam) {
+      const customLevel = UI.parseCustomLevel(customParam);
+      if (customLevel) {
+        UI.startCustomLevel(customLevel);
+        AuthUI.updateMenuAuthBadge(!!user, user);
+        return;
+      }
+    }
+
     UI.showScreen('menu');
 
     // Update auth badge & player info

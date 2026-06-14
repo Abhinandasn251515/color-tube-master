@@ -569,6 +569,9 @@
     <button class="btn-secondary" id="win-share" style="width: 100%; margin-top: 10px; text-align: center; justify-content: center; display: flex; align-items: center; gap: 8px; font-weight: 800; border-radius: var(--r-lg);">
       📢 Brag & Share Score
     </button>
+    <button class="btn-secondary" id="win-share-card" style="width: 100%; margin-top: 10px; text-align: center; justify-content: center; display: flex; align-items: center; gap: 8px; font-weight: 800; border-radius: var(--r-lg); background: linear-gradient(135deg, #a855f7, #ec4899); border: none; color: white; box-shadow: 0 4px 12px rgba(168,85,247,0.35);">
+      🖼️ Save Share Card
+    </button>
     <!-- Win screen banner ad -->
     <div class="ad-banner-wrap ad-banner-win" id="ad-win-banner"></div>
   </div>
@@ -626,6 +629,12 @@
         <button class="theme-opt"        data-theme="fantasy" data-unlock="60">🧙 Fantasy</button>
         <button class="theme-opt"        data-theme="ocean"   data-unlock="80">🌊 Ocean</button>
       </div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-section-title">Rewards & Referrals</div>
+      <button class="btn-primary" id="btn-open-rewards" style="width: 100%; border-radius: var(--r-md); justify-content: center; font-weight: 800; padding: 10px; margin-top: 5px; cursor: pointer; display: flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #ec4899, #d946ef); box-shadow: 0 4px 12px rgba(236,72,153,0.3); border: none; color: white;">
+        🎁 Claim Codes & Referrals
+      </button>
     </div>
     <div class="settings-section">
       <div class="settings-section-title">Account</div>
@@ -734,14 +743,15 @@
       </div>
     </div>
 
-    <!-- Game 4: Unblock Me 3D (Locked) -->
-    <div class="arcade-card locked-card">
-      <div class="arcade-card-visual locked-bg">
-        <div class="arcade-card-icon">🔒</div>
+    <!-- Game 4: Custom Level Editor -->
+    <div class="arcade-card active-card" id="arcade-card-editor">
+      <div class="arcade-card-visual editor-bg" style="background: linear-gradient(135deg, #7c3aed, #db2777); display: flex; justify-content: center; align-items: center;">
+        <div class="arcade-card-icon" style="font-size: 2.5rem; filter: drop-shadow(0 0 10px rgba(219,39,119,0.5));">🛠️</div>
       </div>
       <div class="arcade-card-info">
-        <div class="arcade-card-title">Unblock Me 3D</div>
-        <div class="arcade-card-desc">Coming soon in next update!</div>
+        <div class="arcade-card-title">Level Designer</div>
+        <div class="arcade-card-desc">Design, verify, and share custom puzzles!</div>
+        <button class="btn-arcade-play" id="btn-play-editor">Open Editor</button>
       </div>
     </div>
   </div>
@@ -842,6 +852,84 @@
 
   <div class="ttt-actions">
     <button class="btn-primary" id="ttt-reset" style="padding:10px 28px;font-size:0.9rem;">🔄 New Game</button>
+  </div>
+</div>
+
+<!-- ════════ CUSTOM LEVEL EDITOR ════════ -->
+<div class="screen" id="screen-editor">
+  <div class="screen-header">
+    <button class="btn-back" id="editor-back">←</button>
+    <div class="screen-title">🛠️ Level Designer</div>
+  </div>
+  
+  <div class="editor-hud">
+    <div class="editor-status" id="editor-status">Paint colors into tubes (Max 4 per tube). Test it or share!</div>
+  </div>
+
+  <div class="editor-workspace">
+    <!-- Tubes will be rendered here dynamically -->
+    <div class="editor-tubes-grid" id="editor-tubes-grid"></div>
+  </div>
+
+  <!-- Color Palette & Tools -->
+  <div class="editor-toolbar">
+    <div class="editor-section-title">Color Palette</div>
+    <div class="editor-palette" id="editor-palette">
+      <!-- Injected dynamically with swatches for colors in Levels.COLORS + Eraser -->
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="editor-actions">
+    <button class="btn-secondary" id="editor-btn-add-tube" style="padding:10px 14px;font-size:0.8rem;">➕ Add Tube</button>
+    <button class="btn-secondary" id="editor-btn-remove-tube" style="padding:10px 14px;font-size:0.8rem;">➖ Remove Tube</button>
+    <button class="btn-secondary" id="editor-btn-clear" style="padding:10px 14px;font-size:0.8rem;">🧹 Clear All</button>
+    <button class="btn-primary" id="editor-btn-test" style="padding:10px 18px;font-size:0.9rem;">▶️ Test Play</button>
+    <button class="btn-primary" id="editor-btn-share" style="padding:10px 18px;font-size:0.9rem;background:linear-gradient(135deg, #10b981, #059669);box-shadow: 0 4px 15px rgba(16,185,129,0.35);">📤 Share Level</button>
+  </div>
+</div>
+
+<!-- ════════ PROMO & REFERRAL REWARDS ════════ -->
+<div class="screen" id="screen-rewards">
+  <div class="screen-header">
+    <button class="btn-back" id="rewards-back">←</button>
+    <div class="screen-title">🎁 Rewards & Referrals</div>
+  </div>
+  <div class="settings-list">
+    <div class="settings-section" style="text-align: center; padding: 20px 10px;">
+      <div style="font-size: 3.5rem; margin-bottom: 10px;">🎁</div>
+      <h3 style="color:#fff; margin-bottom: 5px;">Share & Earn Rewards</h3>
+      <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); line-height: 1.4; margin-bottom: 15px;">
+        Share your unique referral code with friends. When they redeem it, they get coins/gems, and you help grow the community!
+      </p>
+      
+      <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--r-md); padding: 15px; margin-bottom: 20px;">
+        <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-primary); margin-bottom: 5px;">Your Referral Code</div>
+        <div id="referral-code-display" style="font-size: 1.8rem; font-weight: 800; color: #fff; letter-spacing: 2px; margin-bottom: 10px;">CTM-XXXXXX</div>
+        <button class="btn-secondary" id="btn-copy-referral" style="margin: 0 auto; display: flex; align-items: center; gap: 6px; padding: 8px 16px; font-size: 0.8rem;">
+          📋 Copy Code
+        </button>
+      </div>
+    </div>
+    
+    <div class="settings-section">
+      <div class="settings-section-title">Redeem Code</div>
+      <div style="display: flex; gap: 10px; margin-top: 10px;">
+        <input class="settings-input" id="promo-code-input" placeholder="Enter promo or referral code" style="flex: 1; text-transform: uppercase; margin-bottom: 0;"/>
+        <button class="btn-primary" id="btn-redeem-code" style="padding: 10px 20px; font-weight: 800; cursor: pointer;">Redeem</button>
+      </div>
+      <div id="redeem-message" style="margin-top: 10px; font-size: 0.85rem; text-align: center; min-height: 1.2rem; transition: color 0.2s;"></div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">Active Promo Codes</div>
+      <div style="font-size: 0.8rem; color: rgba(255,255,255,0.6); line-height: 1.5; padding: 5px 0;">
+        Try these codes to get started:<br/>
+        • <strong style="color:var(--color-primary);">VIRAL100</strong>: Get 🪙 100 Coins!<br/>
+        • <strong style="color:var(--color-primary);">SUPERGEM</strong>: Get 💎 50 Gems!<br/>
+        • <strong style="color:var(--color-primary);">NEONSKIN</strong>: Unlock the ⚡ Neon Glow Skin!
+      </div>
+    </div>
   </div>
 </div>
 

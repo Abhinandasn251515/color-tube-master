@@ -9,6 +9,31 @@ const UI = (() => {
   let adTimerInt    = null;
   let lastWinData   = null;
 
+  let activePaintColor = 'red';
+  let customTubes = [
+    ['red', 'red', 'blue', 'blue'],
+    ['blue', 'blue', 'red', 'red'],
+    [],
+    []
+  ];
+
+  const EMOJI_MAP = {
+    red: '🔴', blue: '🔵', green: '🟢', yellow: '🟡',
+    purple: '🟣', orange: '🟠', pink: '🌸', cyan: '🔷',
+    lime: '🍏', brown: '🟤', teal: '💠', maroon: '🟥',
+    navy: '🟦', indigo: '🌌', white: '⚪'
+  };
+
+  function getColorHex(color) {
+    const map = {
+      red: '#ff5070', blue: '#60aaff', green: '#34d990', yellow: '#fde047',
+      purple: '#c084fc', orange: '#fb923c', pink: '#f472b6', cyan: '#22d3ee',
+      lime: '#a3e635', brown: '#d97706', teal: '#2dd4bf', maroon: '#f43f5e',
+      navy: '#3b82f6', indigo: '#818cf8', white: '#e2e8f0'
+    };
+    return map[color] || '#ffffff';
+  }
+
   // ── Screen Navigation ──────────────────────────────────
   function showScreen(id, animate = true) {
     if (id !== 'game' && typeof DuelsManager !== 'undefined') {
@@ -30,6 +55,15 @@ const UI = (() => {
     if (id === 'leaderboard') refreshLeaderboard('global');
     if (id === 'daily')  refreshDaily();
     if (id === 'ttt')    TicTacToe3D.resetBoard();
+    if (id === 'editor') initEditor();
+    if (id === 'rewards') {
+      const codeDisplay = document.getElementById('referral-code-display');
+      if (codeDisplay) codeDisplay.textContent = Storage.get('referralCode') || 'CTM-XXXXXX';
+      const msg = document.getElementById('redeem-message');
+      if (msg) msg.textContent = '';
+      const input = document.getElementById('promo-code-input');
+      if (input) input.value = '';
+    }
     if (id === 'duels' && typeof DuelsManager !== 'undefined') {
       const select = document.getElementById('duel-level-select');
       if (select) {
@@ -639,15 +673,368 @@ const UI = (() => {
     setTimeout(() => el.remove(), 2500);
   }
 
-  function showQRShareModal(levelId = 1) {
+  function initEditor() {
+    const palette = document.getElementById('editor-palette');
+    if (!palette) return;
+    palette.innerHTML = '';
+
+    Levels.COLORS.forEach(color => {
+      const swatch = document.createElement('div');
+      swatch.className = `swatch ${color === activePaintColor ? 'active' : ''}`;
+      swatch.style.backgroundColor = getColorHex(color);
+      swatch.dataset.color = color;
+      swatch.addEventListener('click', () => {
+        Audio.click();
+        document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+        swatch.classList.add('active');
+        activePaintColor = color;
+      });
+      palette.appendChild(swatch);
+    });
+
+    const eraser = document.createElement('div');
+    eraser.className = `swatch eraser-swatch ${activePaintColor === 'eraser' ? 'active' : ''}`;
+    eraser.innerHTML = '❌';
+    eraser.dataset.color = 'eraser';
+    eraser.title = 'Eraser';
+    eraser.addEventListener('click', () => {
+      Audio.click();
+      document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+      eraser.classList.add('active');
+      activePaintColor = 'eraser';
+    });
+    palette.appendChild(eraser);
+
+    renderEditorTubes();
+  }
+
+  function renderEditorTubes() {
+    const grid = document.getElementById('editor-tubes-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    const skin = Storage.get('equippedSkin') || 'default';
+    const skinClass = skin !== 'default' ? `skin-${skin}` : '';
+
+    customTubes.forEach((tube, idx) => {
+      const wrap = Renderer.buildTubeHTML(tube, idx, 'sz-md', skinClass);
+      
+      wrap.addEventListener('click', () => {
+        Audio.click();
+        if (activePaintColor === 'eraser') {
+          if (tube.length > 0) {
+            tube.pop();
+            renderEditorTubes();
+          }
+        } else {
+          if (tube.length < 4) {
+            tube.push(activePaintColor);
+            renderEditorTubes();
+          } else {
+            showToast('Tube is full!');
+          }
+        }
+      });
+
+      grid.appendChild(wrap);
+    });
+  }
+
+  function serializeCustomLevel(tubes) {
+    return tubes.map(tube => {
+      return tube.map(color => {
+        const idx = Levels.COLORS.indexOf(color);
+        return idx >= 0 ? idx.toString(16) : '';
+      }).join('');
+    }).join('-');
+  }
+
+  function parseCustomLevel(queryStr) {
+    try {
+      const tubeStrings = queryStr.split('-');
+      const tubes = [];
+      for (const s of tubeStrings) {
+        const tube = [];
+        for (let i = 0; i < s.length; i++) {
+          const char = s[i];
+          const colorIdx = parseInt(char, 16);
+          if (colorIdx >= 0 && colorIdx < Levels.COLORS.length) {
+            tube.push(Levels.COLORS[colorIdx]);
+          }
+        }
+        tubes.push(tube);
+      }
+      if (tubes.length < 3) return null;
+      return {
+        id: 'custom',
+        difficulty: 'medium',
+        tubes: tubes,
+        emptyTubes: tubes.filter(t => t.length === 0).length,
+        colors: tubes.flat().filter((v, i, a) => a.indexOf(v) === i).length,
+        isCustom: true
+      };
+    } catch (e) {
+      console.error('Failed to parse custom level:', e);
+      return null;
+    }
+  }
+
+  function startCustomLevel(levelData) {
+    if (!levelData) return;
+    showScreen('game');
+    Animations.stopConfetti();
+    Game.onWin(handleWin);
+    Game.loadLevel(levelData);
+    Audio.startMusic();
+  }
+
+  function compileEmojiPuzzle(tubes) {
+    let result = '';
+    tubes.forEach((tube, i) => {
+      const emojis = tube.map(color => EMOJI_MAP[color] || '❓').join('');
+      result += `🧪 [${emojis}]\n`;
+    });
+    return result;
+  }
+
+  function adjustBrightness(hex, percent) {
+    let R = parseInt(hex.substring(1, 3), 16);
+    let G = parseInt(hex.substring(3, 5), 16);
+    let B = parseInt(hex.substring(5, 7), 16);
+
+    R = parseInt(R * (100 + percent) / 100);
+    G = parseInt(G * (100 + percent) / 100);
+    B = parseInt(B * (100 + percent) / 100);
+
+    R = (R < 255) ? R : 255;
+    G = (G < 255) ? G : 255;
+    B = (B < 255) ? B : 255;
+
+    const rHex = R.toString(16).padStart(2, '0');
+    const gHex = G.toString(16).padStart(2, '0');
+    const bHex = B.toString(16).padStart(2, '0');
+
+    return `#${rHex}${gHex}${bHex}`;
+  }
+
+  function drawCanvasTube(ctx, x, y, w, h, colors) {
+    ctx.save();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+    
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x, y + h - w/2);
+    ctx.arc(x + w/2, y + h - w/2, w/2, Math.PI, 0, false);
+    ctx.lineTo(x + w, y);
+    ctx.closePath();
+    
+    ctx.fillStyle = 'rgba(30, 27, 75, 0.5)';
+    ctx.fill();
+    
+    ctx.save();
+    ctx.clip();
+    
+    const maxLayers = 4;
+    const layerH = (h - w/2) / maxLayers;
+    
+    for (let i = 0; i < colors.length; i++) {
+      const color = colors[i];
+      const colorHex = getColorHex(color);
+      ctx.fillStyle = colorHex;
+      
+      const ly = y + h - w/2 - (i + 1) * layerH;
+      ctx.fillRect(x, ly, w, layerH);
+      
+      ctx.fillStyle = adjustBrightness(colorHex, 20);
+      ctx.beginPath();
+      ctx.ellipse(x + w/2, ly, w/2, 4, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    ctx.restore();
+    
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x, y + h - w/2);
+    ctx.arc(x + w/2, y + h - w/2, w/2, Math.PI, 0, false);
+    ctx.lineTo(x + w, y);
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.ellipse(x + w/2, y, w/2 + 3, 5, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(x + 5, y + 10);
+    ctx.lineTo(x + 5, y + h - w/2);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.stroke();
+    
+    ctx.restore();
+  }
+
+  function generateShareCard(levelData, moves, timeSec, starsCount) {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 800;
+      canvas.height = 600;
+      const ctx = canvas.getContext('2d');
+
+      const bgGrad = ctx.createLinearGradient(0, 0, 800, 600);
+      bgGrad.addColorStop(0, '#0a051b');
+      bgGrad.addColorStop(0.5, '#1e1b4b');
+      bgGrad.addColorStop(1, '#02000a');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, 800, 600);
+
+      ctx.beginPath();
+      ctx.arc(150, 150, 250, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(124, 58, 237, 0.15)';
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(650, 450, 200, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(219, 39, 119, 0.12)';
+      ctx.fill();
+
+      ctx.save();
+      ctx.fillStyle = 'rgba(15, 12, 41, 0.6)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+      ctx.lineWidth = 3;
+      
+      function roundRect(x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+      }
+      
+      roundRect(40, 40, 720, 520, 24);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = "bold 32px 'Outfit', sans-serif";
+      ctx.textAlign = 'center';
+      ctx.fillText("COLOR TUBE MASTER 3D", 400, 100);
+
+      ctx.fillStyle = '#a78bfa';
+      ctx.font = "bold 13px 'Outfit', sans-serif";
+      ctx.fillText("THE ULTIMATE SORTING PUZZLE", 400, 125);
+
+      const lineGrad = ctx.createLinearGradient(150, 0, 650, 0);
+      lineGrad.addColorStop(0, 'rgba(0, 255, 204, 0)');
+      lineGrad.addColorStop(0.5, '#00ffcc');
+      lineGrad.addColorStop(1, 'rgba(0, 255, 204, 0)');
+      ctx.fillStyle = lineGrad;
+      ctx.fillRect(150, 140, 500, 2);
+
+      ctx.fillStyle = '#10b981';
+      ctx.font = "900 48px 'Fredoka One', sans-serif";
+      ctx.fillText("LEVEL CLEAR!", 400, 210);
+
+      ctx.fillStyle = '#f59e0b';
+      ctx.font = "40px sans-serif";
+      const starText = '⭐'.repeat(starsCount) + '☆'.repeat(3 - starsCount);
+      ctx.fillText(starText, 400, 260);
+
+      ctx.save();
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+      ctx.lineWidth = 1.5;
+      roundRect(100, 300, 280, 200, 16);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = "14px 'Outfit', sans-serif";
+      
+      let levelNameText = `Level ${levelData.id}`;
+      if (levelData.isDaily) levelNameText = "Daily Challenge";
+      if (levelData.isInfinite) levelNameText = "Infinite Mode";
+
+      ctx.fillText("LEVEL", 130, 345);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = "bold 20px 'Outfit', sans-serif";
+      ctx.fillText(levelNameText, 130, 370);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = "14px 'Outfit', sans-serif";
+      ctx.fillText("MOVES TAKEN", 130, 420);
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = "bold 20px 'Outfit', sans-serif";
+      ctx.fillText(`${moves} Moves`, 130, 445);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = "14px 'Outfit', sans-serif";
+      ctx.fillText("TIME SPENT", 130, 495);
+      ctx.fillStyle = '#2dd4bf';
+      ctx.font = "bold 20px 'Outfit', sans-serif";
+      ctx.fillText(Utils.formatTime(timeSec), 130, 520);
+
+      const colors1 = ['red', 'blue', 'green', 'yellow'];
+      const colors2 = ['green', 'yellow', 'red', 'blue'];
+      const colors3 = [];
+      drawCanvasTube(ctx, 450, 320, 45, 140, colors1);
+      drawCanvasTube(ctx, 520, 320, 45, 140, colors2);
+      drawCanvasTube(ctx, 590, 320, 45, 140, colors3);
+
+      const logoImg = new Image();
+      logoImg.src = 'icons/icon-192.png';
+      logoImg.onload = () => {
+        ctx.drawImage(logoImg, 670, 470, 64, 64);
+        
+        ctx.textAlign = 'right';
+        ctx.fillStyle = 'rgba(255,255,255,0.4)';
+        ctx.font = "10px 'Outfit', sans-serif";
+        ctx.fillText("SCAN OR PLAY AT", 655, 500);
+        ctx.fillStyle = '#00ffcc';
+        ctx.font = "bold 11px 'Outfit', sans-serif";
+        ctx.fillText("COLOR TUBE MASTER 3D", 655, 515);
+
+        resolve(canvas);
+      };
+      logoImg.onerror = () => {
+        resolve(canvas);
+      };
+    });
+  }
+
+  function downloadCanvasImage(canvas, id) {
+    const link = document.createElement('a');
+    link.download = `ctm-victory-level-${id}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }
+
+  function showQRShareModal(urlOrLevelId) {
     const modal = document.getElementById('qr-share-modal');
     const qrImg = document.getElementById('qr-share-img');
     const qrUrl = document.getElementById('qr-share-url');
 
     if (!modal || !qrImg || !qrUrl) return;
 
-    const base = window.location.origin + window.location.pathname;
-    const shareUrl = `${base}?level=${levelId}`;
+    let shareUrl = '';
+    if (typeof urlOrLevelId === 'string' && urlOrLevelId.startsWith('http')) {
+      shareUrl = urlOrLevelId;
+    } else {
+      const base = window.location.origin + window.location.pathname;
+      shareUrl = `${base}?level=${urlOrLevelId || 1}`;
+    }
     qrUrl.value = shareUrl;
 
     qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(shareUrl)}`;
@@ -859,6 +1246,198 @@ const UI = (() => {
       }
     });
 
+    // Custom Level Editor listeners
+    document.getElementById('btn-play-editor')?.addEventListener('click', () => {
+      Audio.click();
+      showScreen('editor');
+    });
+    document.getElementById('editor-back')?.addEventListener('click', () => {
+      Audio.click();
+      showScreen('arcade');
+    });
+    document.getElementById('editor-btn-add-tube')?.addEventListener('click', () => {
+      Audio.click();
+      if (customTubes.length < 12) {
+        customTubes.push([]);
+        renderEditorTubes();
+      } else {
+        showToast('Max 12 tubes allowed!');
+      }
+    });
+    document.getElementById('editor-btn-remove-tube')?.addEventListener('click', () => {
+      Audio.click();
+      if (customTubes.length > 3) {
+        customTubes.pop();
+        renderEditorTubes();
+      } else {
+        showToast('Min 3 tubes required!');
+      }
+    });
+    document.getElementById('editor-btn-clear')?.addEventListener('click', () => {
+      Audio.click();
+      customTubes = customTubes.map(() => []);
+      renderEditorTubes();
+    });
+    document.getElementById('editor-btn-test')?.addEventListener('click', () => {
+      Audio.click();
+      
+      const colorCounts = {};
+      let totalLayers = 0;
+      for (const tube of customTubes) {
+        for (const color of tube) {
+          colorCounts[color] = (colorCounts[color] || 0) + 1;
+          totalLayers++;
+        }
+      }
+      if (totalLayers === 0) {
+        showToast('⚠️ Draw some colors first!');
+        return;
+      }
+      
+      const emptyCount = customTubes.filter(t => t.length === 0).length;
+      if (emptyCount === 0) {
+        showToast('⚠️ Add at least one empty tube!');
+        return;
+      }
+
+      const solvable = Solver.isSolvable(customTubes);
+      if (!solvable) {
+        showToast('⚠️ Warning: This board has no valid solution!');
+      }
+
+      const levelData = {
+        id: 'custom',
+        difficulty: 'medium',
+        tubes: Utils.cloneState(customTubes),
+        emptyTubes: emptyCount,
+        colors: Object.keys(colorCounts).length,
+        isCustom: true
+      };
+      startCustomLevel(levelData);
+    });
+
+    document.getElementById('editor-btn-share')?.addEventListener('click', () => {
+      Audio.click();
+      
+      const colorCounts = {};
+      let totalLayers = 0;
+      for (const tube of customTubes) {
+        for (const color of tube) {
+          colorCounts[color] = (colorCounts[color] || 0) + 1;
+          totalLayers++;
+        }
+      }
+      if (totalLayers === 0) {
+        showToast('⚠️ Paint some colors first!');
+        return;
+      }
+
+      for (const [color, count] of Object.entries(colorCounts)) {
+        if (count % 4 !== 0) {
+          showToast(`⚠️ Each color must have exactly 4 layers! ${color} has ${count}.`);
+          return;
+        }
+      }
+
+      const emptyCount = customTubes.filter(t => t.length === 0).length;
+      if (emptyCount === 0) {
+        showToast('⚠️ Add at least one empty tube!');
+        return;
+      }
+
+      const solvable = Solver.isSolvable(customTubes);
+      if (!solvable) {
+        showToast('⚠️ This board is not solvable! Adjust layers.');
+        return;
+      }
+
+      const code = serializeCustomLevel(customTubes);
+      const base = window.location.origin + window.location.pathname;
+      const shareUrl = `${base}?custom=${code}`;
+      const emojiPuzzle = compileEmojiPuzzle(customTubes);
+
+      const shareText = `🧪 Challenge! Can you solve my custom level in Color Tube Master 3D?\n\n${emojiPuzzle}\nPlay here: ${shareUrl}`;
+
+      navigator.clipboard.writeText(shareText)
+        .then(() => {
+          showToast('🔗 Custom level copied to clipboard!');
+          showQRShareModal(shareUrl);
+        })
+        .catch(() => {
+          showToast('Failed to copy. Sharing QR...');
+          showQRShareModal(shareUrl);
+        });
+    });
+
+    // Rewards & Referral screen listeners
+    document.getElementById('btn-open-rewards')?.addEventListener('click', () => {
+      Audio.click();
+      showScreen('rewards');
+    });
+    document.getElementById('rewards-back')?.addEventListener('click', () => {
+      Audio.click();
+      showScreen('settings');
+    });
+    document.getElementById('btn-copy-referral')?.addEventListener('click', () => {
+      Audio.click();
+      const refCode = Storage.get('referralCode');
+      if (refCode) {
+        navigator.clipboard.writeText(refCode)
+          .then(() => showToast('📋 Referral code copied!'))
+          .catch(() => showToast('Failed to copy code.'));
+      }
+    });
+    document.getElementById('btn-redeem-code')?.addEventListener('click', () => {
+      Audio.click();
+      const input = document.getElementById('promo-code-input');
+      const msg = document.getElementById('redeem-message');
+      if (!input || !msg) return;
+
+      const result = Progression.claimPromoCode(input.value);
+      if (result.success) {
+        msg.style.color = '#10b981';
+        msg.textContent = result.message;
+        input.value = '';
+        showToast('🎁 Reward Claimed!');
+        refreshMenu();
+      } else {
+        msg.style.color = '#ef4444';
+        msg.textContent = result.message;
+      }
+    });
+
+    // Canvas Brag Card listener on Win Screen
+    document.getElementById('win-share-card')?.addEventListener('click', () => {
+      Audio.click();
+      if (!lastWinData) return;
+      
+      showToast('Generating share card...');
+      const { levelData, moves, timeSec } = lastWinData;
+      const starsCount = Levels.calcStars(levelData.id, moves, timeSec);
+
+      generateShareCard(levelData, moves, timeSec, starsCount).then(canvas => {
+        canvas.toBlob((blob) => {
+          if (!blob) {
+            showToast('Generation failed.');
+            return;
+          }
+          const file = new File([blob], `ctm-clear-level-${levelData.id || 'custom'}.png`, { type: 'image/png' });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            navigator.share({
+              files: [file],
+              title: 'Color Tube Master 3D Victory!',
+              text: `I cleared this puzzle! Can you beat my score?`
+            }).catch(err => {
+              console.log('Share failed, downloading instead:', err);
+              downloadCanvasImage(canvas, levelData.id || 'custom');
+            });
+          } else {
+            downloadCanvasImage(canvas, levelData.id || 'custom');
+          }
+        }, 'image/png');
+      });
+    });
+
     // Any click to resume AudioContext
     document.addEventListener('click', () => Audio.resume(), { once: true });
   }
@@ -867,7 +1446,8 @@ const UI = (() => {
     showScreen, refreshMenu, startLevel, startDailyChallenge,
     startInfiniteMode, applyTheme, initSettings, showAdModal,
     closeAdModal, showLoginRewardModal, showPauseModal, hidePauseModal,
-    showToast, showQRShareModal, bindEvents
+    showToast, showQRShareModal, bindEvents,
+    parseCustomLevel, startCustomLevel
   };
 })();
 

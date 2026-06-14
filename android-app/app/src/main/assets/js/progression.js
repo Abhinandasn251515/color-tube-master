@@ -208,11 +208,62 @@ const Progression = (() => {
     return all;
   }
 
+  function claimPromoCode(rawCode) {
+    if (!rawCode) return { success: false, message: 'Please enter a code!' };
+    const code = rawCode.trim().toUpperCase();
+    const save = Storage.data();
+    if (!save.claimedCodes) save.claimedCodes = {};
+
+    if (save.claimedCodes[code]) {
+      return { success: false, message: 'Code already claimed!' };
+    }
+
+    const ownReferral = (save.referralCode || '').toUpperCase();
+    if (code === ownReferral) {
+      return { success: false, message: 'You cannot use your own referral code!' };
+    }
+
+    // Check if it's a valid referral pattern: CTM-XXXXXX
+    const isReferralPattern = /^CTM-[A-Z0-9]{6}$/.test(code);
+
+    if (isReferralPattern) {
+      Storage.addCoins(150);
+      Storage.addGems(10);
+      save.claimedCodes[code] = true;
+      Storage.save();
+      return { success: true, message: 'Referral reward claimed: 🪙 150 & 💎 10!' };
+    }
+
+    if (code === 'VIRAL100') {
+      Storage.addCoins(100);
+      save.claimedCodes[code] = true;
+      Storage.save();
+      return { success: true, message: 'Promo reward claimed: 🪙 100!' };
+    }
+
+    if (code === 'SUPERGEM') {
+      Storage.addGems(50);
+      save.claimedCodes[code] = true;
+      Storage.save();
+      return { success: true, message: 'Promo reward claimed: 💎 50!' };
+    }
+
+    if (code === 'NEONSKIN') {
+      Storage.ownSkin('neon');
+      save.claimedCodes[code] = true;
+      Storage.save();
+      return { success: true, message: 'Promo reward claimed: ⚡ Neon Glow Skin!' };
+    }
+
+    return { success: false, message: 'Invalid or expired code!' };
+  }
+
   return {
     RANKS, ACHIEVEMENTS, XP,
     getRank, getNextRank, getXPProgress,
     checkAchievements, onLevelComplete,
-    levelRewards, getLoginReward, getLeaderboard
+    levelRewards, getLoginReward, getLeaderboard,
+    claimPromoCode
   };
 })();
 

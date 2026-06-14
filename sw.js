@@ -90,7 +90,7 @@ self.addEventListener('fetch', event => {
   // Same-origin game assets → cache first
   if (url.origin === location.origin) {
     event.respondWith(
-      caches.match(request).then(cached => {
+      caches.match(request, { ignoreSearch: true }).then(cached => {
         if (cached) return cached;
 
         return fetch(request).then(response => {

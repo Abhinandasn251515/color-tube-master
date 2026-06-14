@@ -22,6 +22,7 @@ const Storage = (() => {
     sfxOn:         true,
     musicOn:       true,
     hapticOn:      true,
+    pushNotificationsEnabled: false,
     ownedThemes:   ['lab'],
     ownedSkins:    ['default'],
     equippedTheme: 'lab',

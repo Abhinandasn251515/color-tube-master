@@ -406,6 +406,10 @@
       <div class="lr-left">🎁 Daily reward ready!</div>
       <button class="lr-claim" id="lr-claim-btn">Claim</button>
     </div>
+    <div class="login-reward-banner pwa-install-banner" id="pwa-install-banner" style="display:none">
+      <div class="lr-left" style="color:#22d3ee;">📲 Install App for offline play!</div>
+      <button class="lr-claim" id="pwa-install-banner-btn" style="background:linear-gradient(135deg, #06b6d4, #0891b2); box-shadow:0 4px 12px rgba(6,182,212,0.4); color:white;">Install</button>
+    </div>
 
     <!-- DONATE BANNER — always visible -->
     <div class="donate-hero-bar">
@@ -611,6 +615,7 @@
       <div class="settings-item">Sound Effects<label class="toggle"><input type="checkbox" id="toggle-sfx" checked/><div class="slider"></div></label></div>
       <div class="settings-item">Music<label class="toggle"><input type="checkbox" id="toggle-music" checked/><div class="slider"></div></label></div>
       <div class="settings-item">Haptic Feedback<label class="toggle"><input type="checkbox" id="toggle-haptic" checked/><div class="slider"></div></label></div>
+      <div class="settings-item">Push Notifications<label class="toggle"><input type="checkbox" id="toggle-push"/><div class="slider"></div></label></div>
     </div>
     <div class="settings-section">
       <div class="settings-section-title">Themes</div>
@@ -883,6 +888,27 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="qr-share-modal" style="display:none">
+  <div class="modal-card" style="text-align:center; max-width: 320px;">
+    <div style="font-size:2.5rem; margin-bottom:5px;">🤝</div>
+    <h3 style="margin: 5px 0 10px 0; color: #fff;">Challenge a Friend!</h3>
+    <p style="font-size: 0.8rem; color: rgba(255,255,255,0.7); margin-bottom: 15px; line-height: 1.4;">Scan this QR code or copy the link below to share this level!</p>
+    
+    <!-- QR Code image container -->
+    <div style="background: white; padding: 12px; border-radius: var(--r-md); display: inline-block; box-shadow: 0 4px 20px rgba(0,0,0,0.3); margin-bottom: 15px;">
+      <img id="qr-share-img" src="" alt="QR Code" style="display: block; width: 160px; height: 160px; border: none;"/>
+    </div>
+    
+    <!-- Copy link field -->
+    <div style="display: flex; gap: 8px; margin-bottom: 15px; width: 100%; box-sizing: border-box;">
+      <input type="text" id="qr-share-url" readonly style="flex: 1; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: var(--r-md); padding: 8px 12px; color: white; font-family: monospace; font-size: 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" />
+      <button class="btn-primary" id="btn-qr-copy" style="padding: 8px 14px; border-radius: var(--r-md); font-weight: 800; cursor: pointer; font-size: 0.8rem;">Copy</button>
+    </div>
+    
+    <button class="btn-ghost" id="btn-qr-close" style="width:100%; text-align:center; margin: 0; padding: 10px;">Close</button>
+  </div>
+</div>
+
 <div class="achievement-toast" id="achievement-toast" style="display:none">
   <div class="at-icon" id="at-icon">🏆</div>
   <div><div class="at-title">Achievement Unlocked!</div><div class="at-name" id="at-name"></div></div>
@@ -964,19 +990,27 @@
     if (installSection) {
       installSection.style.display = 'block';
     }
+    const menuBanner = document.getElementById('pwa-install-banner');
+    if (menuBanner) {
+      menuBanner.style.display = 'flex';
+    }
   });
 
-  document.getElementById('btn-install-app')?.addEventListener('click', async () => {
+  const triggerPwaInstall = async () => {
     if (!deferredPrompt) return;
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
     console.log('[PWA] User choice outcome:', outcome);
     deferredPrompt = null;
+    
     const installSection = document.getElementById('settings-install-section');
-    if (installSection) {
-      installSection.style.display = 'none';
-    }
-  });
+    if (installSection) installSection.style.display = 'none';
+    const menuBanner = document.getElementById('pwa-install-banner');
+    if (menuBanner) menuBanner.style.display = 'none';
+  };
+
+  document.getElementById('btn-install-app')?.addEventListener('click', triggerPwaInstall);
+  document.getElementById('pwa-install-banner-btn')?.addEventListener('click', triggerPwaInstall);
 
   // Detect iOS and show tooltip if not already in standalone PWA mode
   window.addEventListener('DOMContentLoaded', () => {

@@ -410,6 +410,62 @@ const UI = (() => {
       nameInput.addEventListener('input', e => Storage.set('playerName', e.target.value || 'Puzzle Master'));
     }
 
+    const pushToggle = document.getElementById('toggle-push');
+    if (pushToggle) {
+      pushToggle.checked = !!save.pushNotificationsEnabled;
+      pushToggle.addEventListener('change', async (e) => {
+        const enabled = e.target.checked;
+        if (enabled) {
+          if ('Notification' in window) {
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') {
+              Storage.set('pushNotificationsEnabled', true);
+              showToast('🚀 Notifications enabled!');
+              
+              if ('serviceWorker' in navigator) {
+                try {
+                  const reg = await navigator.serviceWorker.ready;
+                  reg.showNotification('🧪 Color Tube Master 3D', {
+                    body: "Notifications are successfully activated! You'll receive daily challenge updates. 🏆",
+                    icon: '/icons/icon-192.png',
+                    vibrate: [100, 50, 100],
+                    tag: 'ctm3d-welcome'
+                  });
+
+                  if (reg.pushManager) {
+                    let sub = await reg.pushManager.getSubscription();
+                    if (!sub) {
+                      const pubKey = 'BEl6tzScwT0c20g9iZpxj59x7r6a7p208g9x7r6a7p208g9x7';
+                      sub = await reg.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: pubKey
+                      }).catch(() => null);
+                    }
+                    if (sub) {
+                      console.log('[Push API] Native subscription active:', JSON.stringify(sub));
+                      Storage.set('pushSubscription', JSON.stringify(sub));
+                    }
+                  }
+                } catch (err) {
+                  console.warn('[Push API] Notification setup warning:', err);
+                }
+              }
+            } else {
+              Storage.set('pushNotificationsEnabled', false);
+              pushToggle.checked = false;
+              showToast('❌ Notification permission denied.');
+            }
+          } else {
+            showToast('⚠️ Notifications not supported on this browser.');
+            pushToggle.checked = false;
+          }
+        } else {
+          Storage.set('pushNotificationsEnabled', false);
+          showToast('Notifications deactivated.');
+        }
+      });
+    }
+
     // Theme picker in settings
     const completed = Storage.countCompleted();
     document.querySelectorAll('.theme-opt').forEach(opt => {
@@ -583,6 +639,21 @@ const UI = (() => {
     setTimeout(() => el.remove(), 2500);
   }
 
+  function showQRShareModal(levelId = 1) {
+    const modal = document.getElementById('qr-share-modal');
+    const qrImg = document.getElementById('qr-share-img');
+    const qrUrl = document.getElementById('qr-share-url');
+
+    if (!modal || !qrImg || !qrUrl) return;
+
+    const base = window.location.origin + window.location.pathname;
+    const shareUrl = `${base}?level=${levelId}`;
+    qrUrl.value = shareUrl;
+
+    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(shareUrl)}`;
+    modal.style.display = 'flex';
+  }
+
   // ── Bind All Button Events ─────────────────────────────
   function bindEvents() {
 
@@ -620,10 +691,8 @@ const UI = (() => {
       if (navigator.share) {
         navigator.share(shareData).catch(() => {});
       } else {
-        // Fallback: copy to clipboard
-        navigator.clipboard.writeText('🧪 Play Color Tube Master 3D! https://color-tube-master.web.app')
-          .then(() => showToast('🔗 Link copied! Share it with friends!'))
-          .catch(() => showToast('Share: color-tube-master.web.app'));
+        const completed = Storage.countCompleted();
+        showQRShareModal(completed + 1 <= 100 ? completed + 1 : 1);
       }
     });
     document.getElementById('btn-share-hero')?.addEventListener('click', () => {
@@ -654,9 +723,7 @@ const UI = (() => {
       if (navigator.share) {
         navigator.share(shareData).catch(() => {});
       } else {
-        navigator.clipboard.writeText(`${text} Play free at: https://color-tube-master.web.app`)
-          .then(() => showToast('🔗 Score copied to clipboard! Share it!'))
-          .catch(() => showToast('Failed to copy to clipboard'));
+        showQRShareModal(levelData.id || 1);
       }
     });
 
@@ -677,9 +744,8 @@ const UI = (() => {
       if (navigator.share) {
         navigator.share(shareData).catch(() => {});
       } else {
-        navigator.clipboard.writeText(`${text} Play free at: https://color-tube-master.web.app`)
-          .then(() => showToast('🔗 Rank copied to clipboard! Share it!'))
-          .catch(() => showToast('Failed to copy to clipboard'));
+        const completed = Storage.countCompleted();
+        showQRShareModal(completed + 1 <= 100 ? completed + 1 : 1);
       }
     });
 
@@ -775,6 +841,24 @@ const UI = (() => {
       document.getElementById('modal-login-reward').style.display = 'none';
     });
 
+    // QR Share Modal buttons
+    document.getElementById('btn-qr-close')?.addEventListener('click', () => {
+      Audio.click();
+      document.getElementById('qr-share-modal').style.display = 'none';
+    });
+
+    document.getElementById('btn-qr-copy')?.addEventListener('click', () => {
+      Audio.click();
+      const qrUrlInput = document.getElementById('qr-share-url');
+      if (qrUrlInput) {
+        qrUrlInput.select();
+        qrUrlInput.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(qrUrlInput.value)
+          .then(() => showToast('🔗 Share URL copied!'))
+          .catch(() => showToast('Failed to copy.'));
+      }
+    });
+
     // Any click to resume AudioContext
     document.addEventListener('click', () => Audio.resume(), { once: true });
   }
@@ -783,7 +867,7 @@ const UI = (() => {
     showScreen, refreshMenu, startLevel, startDailyChallenge,
     startInfiniteMode, applyTheme, initSettings, showAdModal,
     closeAdModal, showLoginRewardModal, showPauseModal, hidePauseModal,
-    showToast, bindEvents
+    showToast, showQRShareModal, bindEvents
   };
 })();
 

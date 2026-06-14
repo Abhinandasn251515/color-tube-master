@@ -120,9 +120,11 @@ const Utils = (() => {
     return n.toLocaleString();
   }
 
-  /** Vibrate (if available) */
+  /** Vibrate (if available and enabled in settings) */
   function vibrate(pattern = [20]) {
-    if (navigator.vibrate) navigator.vibrate(pattern);
+    if (navigator.vibrate && typeof Storage !== 'undefined' && Storage.data && Storage.data() && Storage.data().hapticOn) {
+      navigator.vibrate(pattern);
+    }
   }
 
   return {

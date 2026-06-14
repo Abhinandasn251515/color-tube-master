@@ -307,6 +307,7 @@ const Game = (() => {
 
     Renderer.markAllDone(state.tubes);
     Audio.win();
+    Utils.vibrate([40, 40, 80, 40, 120]);
     Animations.startConfetti();
 
     if (onWinCallback) {

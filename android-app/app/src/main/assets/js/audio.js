@@ -138,6 +138,9 @@ const Audio = (() => {
 
   /** Button click */
   function click() {
+    if (typeof Utils !== 'undefined' && Utils.vibrate) {
+      Utils.vibrate([20]);
+    }
     playSfx((c, g) => {
       const osc = c.createOscillator();
       const gain = c.createGain();

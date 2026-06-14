@@ -90,6 +90,11 @@ const Progression = (() => {
           newlyUnlocked.push(ach);
           // Award XP
           Storage.addXP(XP.achievement);
+          
+          // Android Native Bridge Hook
+          if (typeof AndroidBridge !== 'undefined') {
+            try { AndroidBridge.unlockAchievement(ach.id); } catch(e) { console.error('[Bridge] Achievement Error:', e); }
+          }
         }
       }
     }
@@ -107,6 +112,11 @@ const Progression = (() => {
 
     const totalXP = Storage.addXP(xpGained);
     Storage.saveLevel(levelId, stars, moves, timeSec);
+
+    // Android Native Bridge Hook
+    if (typeof AndroidBridge !== 'undefined') {
+      try { AndroidBridge.submitScore(totalXP); } catch(e) { console.error('[Bridge] Submit Score Error:', e); }
+    }
 
     const { coins, gems } = levelRewards(stars, difficulty || 'beginner');
     const totalCoins = Storage.addCoins(coins);
